@@ -27,6 +27,58 @@ void Enemy::init(int type, sf::Texture& texture)
 }
 
 
+// note: do NOT call without setting texture
+void Enemy::updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet>& bullets, int currentFrame)
+{
+    if (path.size() < 1) return;
+    if (frame % 6 == 0) // 1/10 of a second
+    {
+        spriteLeft += 32;
+        if (spriteLeft >= 160)
+            spriteLeft = 0;
+
+        sprite.setTextureRect(sf::IntRect(spriteLeft, spriteTop, 32, 32));
+    }
+
+    for (Bullet& bullet : bullets)
+    {
+        if (bullet.isPlayerOwned() && getHitbox().intersects(bullet.getHitbox()))
+        {
+            setRender(false);
+            bullet.setRender(false);
+        }
+    }
+
+    if (currentFrame == -1)
+    {
+        if (movementFrame > 0)
+        {
+            sprite.move(moveX, moveY);
+        }
+        movementFrame--;
+
+        if (point < path.size() && movementFrame <= 0)
+        {
+            moveX = 0;
+            moveY = 0;
+            std::cout << timer.getElapsedTime().asMilliseconds() << " " << 60 * path.getPathSpeed() / path.size() << "\n";
+            moveToPoint(path[point], 60 * path.getPathSpeed() / path.size());
+            point++;
+        }
+    }
+    else
+    {
+        if (currentFrame < path.size())
+            sprite.setPosition(playableToPather(path[currentFrame], window));
+        else
+            sprite.setPosition(playableToPather(path[path.size() - 1], window));
+    }
+
+
+    window.draw(sprite);
+}
+
+
 void Enemy::setTexture(sf::Texture& texture)
 {
     sprite.setTexture(texture);
@@ -80,6 +132,32 @@ void Enemy::pushToPath(sf::Vector2f point)
 }
 
 
+int Enemy::pushToPatterns(BulletPattern pattern) // returns index of pattern
+{
+    int foundIndex = -1;
+
+    for (int i = 0; i < patterns.size(); i++)
+    {
+        if(patterns[i].getName() == pattern.getName());
+            foundIndex = i;
+    }
+
+    if (foundIndex == -1)
+    {
+        patterns.push_back(pattern);
+        return patterns.size() - 1;
+    }
+    else
+        return foundIndex;
+}
+
+
+void Enemy::eraseFromPatterns(int index)
+{
+    patterns.erase(patterns.begin() + index);
+}
+
+
 Path Enemy::getPath()
 {
     return path;
@@ -92,59 +170,6 @@ void Enemy::clearPath()
     point = 1; // reset location of path
     movementFrame = -1;
 }
-
-
-// note: do NOT call without setting texture
-void Enemy::updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet>& bullets, int currentFrame)
-{
-    if (path.size() < 1) return;
-    if (frame % 6 == 0) // 1/10 of a second
-    {
-        spriteLeft += 32;
-        if (spriteLeft >= 160)
-            spriteLeft = 0;
-
-        sprite.setTextureRect(sf::IntRect(spriteLeft, spriteTop, 32, 32));
-    }
-
-    for (Bullet& bullet : bullets)
-    {
-        if (bullet.isPlayerOwned() && getHitbox().intersects(bullet.getHitbox()))
-        {
-            setRender(false);
-            bullet.setRender(false);
-        }
-    }
-
-    if (currentFrame == -1)
-    {
-        if (movementFrame > 0)
-        {
-            sprite.move(moveX, moveY);
-        }
-        movementFrame--;
-
-        if (point < path.size() && movementFrame <= 0)
-        {
-            moveX = 0;
-            moveY = 0;
-            std::cout << timer.getElapsedTime().asMilliseconds() << " " << 60 * path.getPathSpeed() / path.size() << "\n";
-            moveToPoint(path[point], 60 * path.getPathSpeed() / path.size());
-            point++;
-        }
-    }
-    else 
-    {
-        if (currentFrame < path.size())
-            sprite.setPosition(playableToPather(path[currentFrame], window));
-        else
-            sprite.setPosition(playableToPather(path[path.size() - 1], window));
-    }
-    
-
-    window.draw(sprite);
-}
-
 
 
 void Enemy::moveToPoint(sf::Vector2f pointToMove, int framesToTake)

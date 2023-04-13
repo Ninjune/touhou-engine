@@ -5,17 +5,15 @@ make sure to make instructions/readme explaining the premise of the game, contro
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <chrono>
+#include <map>
 #include "Entity/Player.h"
 #include "Entity/Bullet.h"
 #include "Entity/Enemy.h"
 #include "Util/Keybind.h"
 #include "Editor/Pather.h"
-const int SCREENWIDTH = 1422, SCREENHEIGHT = 800;
 
-sf::Vector2f patherToPlayable(sf::Vector2f,
-    sf::RectangleShape&, sf::RenderWindow&);
-sf::Vector2f playableToPather(sf::Vector2f,
-    sf::RectangleShape&, sf::RenderWindow&);
+const int SCREENWIDTH = 1422, SCREENHEIGHT = 800;
+void defineTextures(std::map<std::string, sf::Texture>& map);
 /*
 Todo:
 - Enemy bullets
@@ -29,6 +27,8 @@ Todo:
 
 int main()
 {
+    std::map<std::string, sf::Texture> textureMap;
+    defineTextures(textureMap);
     int frame = 0, fps = 0;
     bool titleScreen = true, patherEnabled = false;
     sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "real touhou game");
@@ -42,13 +42,7 @@ int main()
     std::string textString;
     text.setFont(font);
 
-    sf::Texture playerTexture;
-    playerTexture.loadFromFile("textures/player/pl00/player.png");
-
-    sf::Texture enemyTexture;
-    enemyTexture.loadFromFile("textures/enemy/enemy.png");
-
-    Player player(window, playerTexture);
+    Player player(window, textureMap["player"]);
     Keybind eKey(sf::Keyboard::E), pKey(sf::Keyboard::P), RBracketKey(sf::Keyboard::RBracket);
     Pather pather(window, font, SCREENWIDTH, SCREENHEIGHT);
     std::vector<Enemy> enemies, enemiesTemp;
@@ -81,8 +75,6 @@ int main()
             if (pKey.consumeClick(frame, 15))
             {
                 patherEnabled = !patherEnabled;
-                //if (patherEnabled == false)
-                //    enemies.push_back(Enemy(0, enemyTexture));
                 bullets.clear();
             }
 
@@ -108,7 +100,7 @@ int main()
             }
 
             if (patherEnabled) // make pather draw everything in window
-                pather.update(window, frame, enemyTexture);
+                pather.update(window, frame, textureMap["enemy"]);
 
             for (unsigned int i = 0; i < enemies.size(); i++)
             {
@@ -126,4 +118,15 @@ int main()
     }
 
     return 0;
+}
+
+
+// defines the textures in the texture map.
+void defineTextures(std::map<std::string, sf::Texture>& textureMap)
+{
+    textureMap["player"] = sf::Texture();
+    textureMap["player"].loadFromFile("textures/player/pl00/player.png");
+
+    textureMap["enemy"] = sf::Texture();
+    textureMap["enemy"].loadFromFile("textures/enemy/enemy.png");
 }

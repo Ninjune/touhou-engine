@@ -19,6 +19,8 @@ public:
 	Path getPath();
 	void clearPath();
 	void pushToPath(sf::Vector2f point);
+	int pushToPatterns(BulletPattern pattern); // returns index of pattern
+	void eraseFromPatterns(int index);
 private:
 	void init(int type, sf::Texture& texture);
 	int movementFrame, point, enemyType; // type 0-3: small sprites, 
