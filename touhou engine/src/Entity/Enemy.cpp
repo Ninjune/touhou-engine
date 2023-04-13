@@ -55,6 +55,16 @@ void Enemy::setPathSpeed(int speed)
 }
 
 
+void Enemy::setPosition(sf::Vector2f pos)
+{
+    for (int i = 0; i < path.size(); i++)
+    {
+        path[i].x = path[i].x + (pos.x  - sprite.getPosition().x);
+        path[i].y = path[i].y + (pos.y - sprite.getPosition().y);
+    }
+}
+
+
 void Enemy::setPlayableArea(sf::RectangleShape in) // means this enemy is in stage editor
 {
     playableArea = in;

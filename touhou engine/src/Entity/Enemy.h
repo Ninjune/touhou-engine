@@ -15,6 +15,7 @@ public:
 	void setType(int type);
 	void setPathSpeed(int);
 	void setPlayableArea(sf::RectangleShape in);
+	void setPosition(sf::Vector2f pos);
 	Path getPath();
 	void clearPath();
 	void pushToPath(sf::Vector2f point);

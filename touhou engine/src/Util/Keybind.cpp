@@ -3,7 +3,6 @@
 
 Keybind::Keybind(sf::Keyboard::Key in)
 {
-	waitFrame = 0;
 	key = in;
 	keyBool = true;
 }
@@ -11,22 +10,35 @@ Keybind::Keybind(sf::Keyboard::Key in)
 
 Keybind::Keybind(sf::Mouse::Button in)
 {
-	waitFrame = 0;
 	button = in;
 	keyBool = false;
 }
 
 
-bool Keybind::consumeClick(int& frame, int framesToWait)
+// note: consume click last in && sequences.
+bool Keybind::consumeClick(int& frame, int framesToWait, int id)
 {
-	if (waitFrame == 0 && (isKey() ? sf::Keyboard::isKeyPressed(key) : sf::Mouse::isButtonPressed(button)))
+	if (!initialFrames.count(id))
 	{
-		waitFrame = framesToWait;
+		initialFrames[id] = frame;
+		cooldowns[id] = framesToWait;
+		return false;
+	}
+	else if ((frame-initialFrames[id] >= cooldowns[id]) && (isKey() ? sf::Keyboard::isKeyPressed(key) : sf::Mouse::isButtonPressed(button)))
+	{
+		initialFrames[id] = frame;
+		cooldowns[id] = framesToWait;
 		return true;
 	}
-	else if (waitFrame > 0)
-		waitFrame--;
 
+	return false;
+}
+
+
+bool Keybind::isHeld()
+{
+	if (isKey() ? sf::Keyboard::isKeyPressed(key) : sf::Mouse::isButtonPressed(button))
+		return true;
 	return false;
 }
 

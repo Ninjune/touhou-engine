@@ -78,13 +78,19 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 	}
 
 	if ((m1.consumeClick(frame, 20) && playRectangle.getGlobalBounds().contains(mousePos)) || spacebar.consumeClick(frame, 20))
+	{
 		play = !play;
+		if (currentFrame >= stageLength - 1)
+			currentFrame = 0;
+	}
 
 	if (play)
 	{
 		playTriangle.setFillColor(sf::Color::Green);
-		if (currentFrame < stageLength-1)
+		if (currentFrame < stageLength - 1)
 			currentFrame++;
+		else
+			play = false;
 	}
 	else
 		playTriangle.setFillColor(sf::Color::Red);
@@ -94,20 +100,25 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 	if (left.consumeClick(frame, 5))
 	{
 		play = false;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && currentFrame - 10 >= 0)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 			currentFrame -= 60;
-		else if (currentFrame - 1 >= 0)
+		else
 			currentFrame -= 1;
 	}
 
 	if (right.consumeClick(frame, 5))
 	{
 		play = false;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && currentFrame + 10 < stageLength)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 			currentFrame += 60;
 		else if (currentFrame + 1 < stageLength)
 			currentFrame += 1;
 	} // make sure to document controls later
+
+	if (currentFrame >= stageLength)
+		currentFrame = stageLength - 1;
+	else if (currentFrame < 0)
+		currentFrame = 0;
 
 	innerRectangle.setPosition(bounds[currentFrame].left, bounds[currentFrame].top);
 	frameText.setString(std::to_string(currentFrame));

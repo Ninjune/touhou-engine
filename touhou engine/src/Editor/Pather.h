@@ -15,7 +15,7 @@ public:
 	void poll(sf::Event&);
 	Path getSelectedEnemyPath();
 private:
-	Keybind upKey, downKey, m1, rKey, m2;
+	Keybind upKey, downKey, m1, rKey, m2, backspace, delkey;
 	std::vector<Keybind> numKeys;
 	sf::VertexArray pathRender;
 	int stageLength, SCREENHEIGHT, SCREENWIDTH;
@@ -32,6 +32,8 @@ private:
 	int selectedEnemyIndex;
 	std::vector<Enemy> patherEnemies;
 	std::vector<Bullet> patherBullets;
-	sf::Texture selectionTexture, pencilTexture;
+	sf::Texture selectionTexture, pencilTexture, duplicateTexture;
+	bool selecting, canDuplicate;
+	void draw(sf::RenderWindow& window, int& frame);
 };
 

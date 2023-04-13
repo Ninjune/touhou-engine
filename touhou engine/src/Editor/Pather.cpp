@@ -4,7 +4,7 @@ Pather::Pather(sf::RenderWindow& window, sf::Font& font, int screenWIn, int scre
     : upKey(sf::Keyboard::Up), downKey(sf::Keyboard::Down), m1(sf::Mouse::Left),
     pathRender(sf::LinesStrip), timeline(window.getSize().x, window.getSize().y, font),
     playableArea(sf::Vector2f(window.getSize().x * 0.7, window.getSize().y * 0.7)),
-    rKey(sf::Keyboard::R), m2(sf::Mouse::Right)
+    rKey(sf::Keyboard::R), m2(sf::Mouse::Right), backspace(sf::Keyboard::Backspace), delkey(sf::Keyboard::Delete)
 {
     SCREENHEIGHT = screenHIn;
     SCREENWIDTH = screenWIn;
@@ -27,9 +27,14 @@ Pather::Pather(sf::RenderWindow& window, sf::Font& font, int screenWIn, int scre
 
     selectionTexture.loadFromFile("textures/tools/selection.png");
     pencilTexture.loadFromFile("textures/tools/pencil.png");
+    duplicateTexture.loadFromFile("textures/tools/duplicate.png");
 
-    tools.push_back(Tool(selectionTexture, window.getSize().x / 25, window.getSize().y / 4*3, 64, 512, true));
-    tools.push_back(Tool(pencilTexture, window.getSize().x / 28*3, window.getSize().y / 4*3, 64, 512));
+    tools.push_back(Tool(selectionTexture, window.getSize().x / 25, window.getSize().y / 4, 64, 512, true)); // select enemy
+    tools.push_back(Tool(pencilTexture, window.getSize().x / 28*3, window.getSize().y / 4, 64, 512)); // draw path
+    tools.push_back(Tool(duplicateTexture, window.getSize().x / 25, window.getSize().y / 4 + 96, 64, 512)); // will duplicate then put copy under mouse to be moved wherever
+
+    selecting = false;
+    canDuplicate = false;
 }
 
 
@@ -61,7 +66,7 @@ void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
             textRect.top + textRect.height / 2.0f);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
-            stageLength = stoi(inputStr) > 0 ? stoi(inputStr) : 0;
+            stageLength = stoi(inputStr) > 0 ? stoi(inputStr)+1 : 0;
         if (inputStr != "")
             frames = std::to_string(stoi(inputStr) / 60.).substr(0, std::to_string(stoi(inputStr) / 60.).size()-4);
         inputText.setPosition(window.getSize().x / 2, window.getSize().y / 2);
@@ -70,17 +75,79 @@ void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
     }
     else
     {
-        timeline.setStageLength(stageLength);
-        if (m2.consumeClick(frame, 20))
-            selectedEnemyIndex = -1;
+        mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
-        if (selectedEnemyIndex == -1)
+        timeline.setStageLength(stageLength);
+
+        if (tools[1].getStatus() && m2.consumeClick(frame, 20))
         {
             patherEnemies.push_back(Enemy(0, texture));
             selectedEnemyIndex = patherEnemies.size() - 1;
             patherEnemies[selectedEnemyIndex].setPlayableArea(playableArea);
         }
-        // this is not a reference so do not modify this.
+
+        if (tools[0].getStatus() || tools[2].getStatus()) // select
+        {
+            for (int i = 0; i < patherEnemies.size(); i++)
+            {
+                if (!selecting && patherEnemies[i].getHitbox().contains(mousePos) && m1.consumeClick(frame, 20, 1))
+                {
+                    selectedEnemyIndex = i;
+                    selecting = true;
+                    canDuplicate = true;
+                }
+            }
+
+            if (selectedEnemyIndex < 0)
+                return draw(window, frame);
+
+            if (tools[2].getStatus() && canDuplicate)
+            {
+                patherEnemies.push_back(Enemy(patherEnemies[selectedEnemyIndex]));
+                selectedEnemyIndex = patherEnemies.size() - 1;
+                patherEnemies[selectedEnemyIndex].setPlayableArea(playableArea);
+                canDuplicate = false;
+            }
+
+            if (selecting && !m1.isHeld())
+                selecting = false;
+
+            sf::RectangleShape hitboxOutline;
+            Enemy& selectedEnemy = patherEnemies[selectedEnemyIndex];
+            sf::FloatRect hitbox = selectedEnemy.getHitbox();
+
+            hitboxOutline.setPosition(hitbox.left, hitbox.top);
+            hitboxOutline.setSize(sf::Vector2f(hitbox.width, hitbox.height));
+            hitboxOutline.setFillColor(sf::Color::Transparent);
+            hitboxOutline.setOutlineColor(sf::Color::White);
+            hitboxOutline.setOutlineThickness(1);
+
+            if (selecting)
+                selectedEnemy.setPosition(mousePos);
+
+            if (backspace.consumeClick(frame, 20) || delkey.consumeClick(frame, 20))
+            {
+                patherEnemies.erase(patherEnemies.begin() + selectedEnemyIndex);
+                selectedEnemyIndex = -1;
+                return draw(window, frame);
+            }
+
+            window.draw(hitboxOutline);
+        }
+        else if (tools[1].getStatus())
+        {
+            if (selectedEnemyIndex < 0)
+                return draw(window, frame);
+            Path selectedEnemyPath = patherEnemies[selectedEnemyIndex].getPath();
+
+            if (m1.consumeClick(frame, 0) &&
+                selectedEnemyPath.size() < selectedEnemyPath.getPathSpeed() * 60 &&
+                sf::Mouse::getPosition(window).y < 0.85 * SCREENHEIGHT &&
+                sf::Mouse::getPosition(window).x > playableArea.getPosition().x - playableArea.getSize().x / 2 &&
+                sf::Mouse::getPosition(window).x < playableArea.getPosition().x + playableArea.getSize().x / 2)
+                patherEnemies[selectedEnemyIndex].pushToPath(patherToPlayable(
+                    sf::Vector2f(mousePos.x, mousePos.y), playableArea, window));
+        }
         Path selectedEnemyPath = patherEnemies[selectedEnemyIndex].getPath();
 
         for (sf::Vector2f& point : selectedEnemyPath)
@@ -90,18 +157,6 @@ void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
             );
         }
 
-        window.draw(pathRender);
-        window.draw(playableArea);
-        mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-
-        if (m1.consumeClick(frame, 0) &&
-            selectedEnemyPath.size() < selectedEnemyPath.getPathSpeed() * 60 &&
-            sf::Mouse::getPosition(window).y < 0.85 * SCREENHEIGHT &&
-            sf::Mouse::getPosition(window).x > playableArea.getPosition().x - playableArea.getSize().x/2 && 
-            sf::Mouse::getPosition(window).x < playableArea.getPosition().x + playableArea.getSize().x / 2)
-            patherEnemies[selectedEnemyIndex].pushToPath(patherToPlayable(
-                sf::Vector2f(mousePos.x, mousePos.y), playableArea, window));
-
         if (rKey.consumeClick(frame, 20))
             patherEnemies[selectedEnemyIndex].clearPath();
 
@@ -110,12 +165,7 @@ void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
         if (downKey.consumeClick(frame, 5))
             patherEnemies[selectedEnemyIndex].setPathSpeed(selectedEnemyPath.getPathSpeed() - 1);
 
-        timeline.update(window, frame);
-        
-        for (Enemy& enemy : patherEnemies)
-            enemy.updateSprite(window, frame, patherBullets, timeline.getCurrentFrame());
-        for (Tool& tool : tools)
-            tool.update(window, frame, tools);
+        draw(window, frame);
     }
 }
 
@@ -149,8 +199,21 @@ sf::Vector2f Pather::playableToPather(sf::Vector2f point,
 
 Path Pather::getSelectedEnemyPath()
 {
-    if (selectedEnemyIndex > 0 && selectedEnemyIndex < patherEnemies.size())
+    if (selectedEnemyIndex >= 0 && selectedEnemyIndex < patherEnemies.size())
         return patherEnemies[selectedEnemyIndex].getPath(); // returning something innacurate
     else
         return {};
+}
+
+
+void Pather::draw(sf::RenderWindow& window, int& frame)
+{
+    window.draw(pathRender);
+    window.draw(playableArea);
+    timeline.update(window, frame);
+
+    for (Enemy& enemy : patherEnemies)
+        enemy.updateSprite(window, frame, patherBullets, timeline.getCurrentFrame());
+    for (Tool& tool : tools)
+        tool.update(window, frame, tools);
 }
