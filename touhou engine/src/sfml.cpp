@@ -10,8 +10,8 @@ make sure to make instructions/readme explaining the premise of the game, contro
 #include "Entity/Enemy.h"
 #include "Util/Keybind.h"
 #include "Editor/Pather.h"
-
 const int SCREENWIDTH = 1422, SCREENHEIGHT = 800;
+
 sf::Vector2f patherToPlayable(sf::Vector2f,
     sf::RectangleShape&, sf::RenderWindow&);
 sf::Vector2f playableToPather(sf::Vector2f,

@@ -4,7 +4,8 @@
 class BulletPattern
 {
 public:
-
+	BulletPattern(std::string patternFolder, std::string fileName, sf::Texture& bulletTexture);
+	std::string getName();
 private:
 	sf::Vector2f origin;
 	int frequency, burstCount,
@@ -13,4 +14,5 @@ private:
 	    spawnDirection, spawnDirectionChange;
 	double velocity, velocityChange;
 	std::string bulletType;
+	std::string name;
 };

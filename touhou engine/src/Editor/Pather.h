@@ -5,7 +5,7 @@
 #include "../Util/Path.h"
 #include "../Entity/Enemy.h"
 #include "Tool.h"
-
+#include "Bullet Pattern Menu/BulletPatternMenu.h"
 // this is the "stage editor".
 class Pather
 {
@@ -23,6 +23,7 @@ private:
 	std::string inputStr;
 	std::vector<Tool> tools;
 	Timeline timeline;
+	BulletPatternMenu bulletPatternMenu;
 	sf::RectangleShape playableArea;
 	sf::Vector2f patherToPlayable(sf::Vector2f point,
 		sf::RectangleShape& playableArea, sf::RenderWindow& window);

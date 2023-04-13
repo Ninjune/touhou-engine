@@ -33,6 +33,10 @@ Pather::Pather(sf::RenderWindow& window, sf::Font& font, int screenWIn, int scre
     tools.push_back(Tool(pencilTexture, window.getSize().x / 28*3, window.getSize().y / 4, 64, 512)); // draw path
     tools.push_back(Tool(duplicateTexture, window.getSize().x / 25, window.getSize().y / 4 + 96, 64, 512)); // will duplicate then put copy under mouse to be moved wherever
 
+    bulletPatternMenu.setPatternFolder("patterns/");
+    bulletPatternMenu.setPosition(300, 300);
+    bulletPatternMenu.setSize(100, 300);
+
     selecting = false;
     canDuplicate = false;
 }
@@ -165,6 +169,7 @@ void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
         if (downKey.consumeClick(frame, 5))
             patherEnemies[selectedEnemyIndex].setPathSpeed(selectedEnemyPath.getPathSpeed() - 1);
 
+        bulletPatternMenu.update(window);
         draw(window, frame);
     }
 }

@@ -77,6 +77,7 @@
       <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +134,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Editor\Bullet Pattern Menu\BulletPatternButton.cpp" />
+    <ClCompile Include="src\Editor\Bullet Pattern Menu\BulletPatternMenu.cpp" />
     <ClCompile Include="src\Entity\Bullet.cpp" />
     <ClCompile Include="src\Util\BulletPattern.cpp" />
     <ClCompile Include="src\Entity\Character.cpp" />
@@ -146,6 +149,8 @@
     <ClCompile Include="src\Editor\Tool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Editor\Bullet Pattern Menu\BulletPatternButton.h" />
+    <ClInclude Include="src\Editor\Bullet Pattern Menu\BulletPatternMenu.h" />
     <ClInclude Include="src\Entity\Bullet.h" />
     <ClInclude Include="src\Util\BulletPattern.h" />
     <ClInclude Include="src\Entity\Character.h" />

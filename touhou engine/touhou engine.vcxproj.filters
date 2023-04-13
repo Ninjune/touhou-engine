@@ -66,6 +66,12 @@
     <ClCompile Include="src\Editor\Pather.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="src\Editor\Bullet Pattern Menu\BulletPatternMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor\Bullet Pattern Menu\BulletPatternButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Entity\Bullet.h">
@@ -97,6 +103,12 @@
     </ClInclude>
     <ClInclude Include="src\Editor\Pather.h">
       <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor\Bullet Pattern Menu\BulletPatternMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor\Bullet Pattern Menu\BulletPatternButton.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
