@@ -42,9 +42,9 @@ int main()
     std::string textString;
     text.setFont(font);
 
-    Player player(window, textureMap["player"]);
+    Player player(window, textureMap);
     Keybind eKey(sf::Keyboard::E), pKey(sf::Keyboard::P), RBracketKey(sf::Keyboard::RBracket);
-    Pather pather(window, font, SCREENWIDTH, SCREENHEIGHT);
+    Pather pather(window, font, textureMap, SCREENWIDTH, SCREENHEIGHT);
     std::vector<Enemy> enemies, enemiesTemp;
     std::vector<Bullet> bullets, bulletsTemp;
 
@@ -63,11 +63,14 @@ int main()
             if (frame % 5 == 0) // 1/12 of a second
             {
                 currentTime = std::chrono::high_resolution_clock::now();
-                fps = 1000000000.0 / (std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count());
+                fps = 1000000000.0 / (std::chrono::duration_cast
+                        <std::chrono::nanoseconds>(currentTime - lastTime).count());
             }
             textString = ("Fps: " + std::to_string(fps) + 
-                (patherEnabled ? "\nPath length: " + std::to_string(pather.getSelectedEnemyPath().size()) +
-                "\nPath speed: " + std::to_string(pather.getSelectedEnemyPath().getPathSpeed()) +
+                (patherEnabled ? "\nPath length: " + 
+                std::to_string(pather.getSelectedEnemyPath().size()) +
+                "\nPath speed: " + 
+                std::to_string(pather.getSelectedEnemyPath().getPathSpeed()) +
                 "s\nReset path: 'R'\nExport path: 'E'\nClear enemies: ]" : "")
             );
             lastTime = std::chrono::high_resolution_clock::now();
@@ -100,7 +103,7 @@ int main()
             }
 
             if (patherEnabled) // make pather draw everything in window
-                pather.update(window, frame, textureMap["enemy"]);
+                pather.update(window, frame, textureMap);
 
             for (unsigned int i = 0; i < enemies.size(); i++)
             {
@@ -110,7 +113,7 @@ int main()
             }
 
             text.setString(textString);
-            if(!patherEnabled) player.updateSprite(window, frame, bullets);
+            if(!patherEnabled) player.updateSprite(window, frame, bullets, textureMap);
             window.draw(text);
             window.display();
             frame++;
@@ -129,4 +132,22 @@ void defineTextures(std::map<std::string, sf::Texture>& textureMap)
 
     textureMap["enemy"] = sf::Texture();
     textureMap["enemy"].loadFromFile("textures/enemy/enemy.png");
+
+    textureMap["bullet1"] = sf::Texture();
+    textureMap["bullet1"].loadFromFile("textures/bullet/bullet1.png");
+
+    textureMap["selectionIcon"] = sf::Texture();
+    textureMap["selectionIcon"].loadFromFile("textures/tools/selection.png");
+
+    textureMap["pencilIcon"] = sf::Texture();
+    textureMap["pencilIcon"].loadFromFile("textures/tools/pencil.png");
+
+    textureMap["duplicateIcon"] = sf::Texture();
+    textureMap["duplicateIcon"].loadFromFile("textures/tools/duplicate.png");
+
+    textureMap["plusIcon"] = sf::Texture();
+    textureMap["plusIcon"].loadFromFile("textures/tools/plus.png");
+
+    textureMap["minusIcon"] = sf::Texture();
+    textureMap["minusIcon"].loadFromFile("textures/tools/minus.png");
 }

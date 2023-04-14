@@ -1,13 +1,14 @@
 #include "Player.h"
 #include <iostream>
 
-Player::Player(sf::RenderWindow& window, sf::Texture& textureIn)
+Player::Player(sf::RenderWindow& window,
+        std::map<std::string, sf::Texture>& textureMap
+    )
 {
     spriteLeft = 0;
     spriteTop = 0;
-    texture = textureIn;
 
-    sprite.setTexture(texture);
+    sprite.setTexture(textureMap["player"]);
     hitboxTexture.loadFromFile("textures/player/hitbox.png");
     sprite.setTextureRect(sf::IntRect(spriteLeft, spriteTop, 32, 50));
     sprite.setOrigin(16, 25);
@@ -38,7 +39,11 @@ Player::Player(sf::RenderWindow& window, sf::Texture& textureIn)
 } 
 
 
-void Player::updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet>& bullets)
+void Player::updateSprite(sf::RenderWindow& window,
+    int frame,
+    std::vector<Bullet>& bullets,
+    std::map<std::string, sf::Texture>& textureMap
+)
 {
     bool goingDirection = false;
     bool drawHitbox = false;
@@ -148,8 +153,8 @@ void Player::updateSprite(sf::RenderWindow& window, int frame, std::vector<Bulle
     {
         if (shootCooldown <= 0)
         {
-            bullets.push_back(Bullet(texture, 0, 15, sf::Vector2f(getPosition().x, getPosition().y-112), true));
-            bullets.push_back(Bullet(texture, 0, 15, sf::Vector2f(getPosition().x-25, getPosition().y-112), true));
+            bullets.push_back(Bullet(textureMap["player"], 0, 15, sf::Vector2f(getPosition().x, getPosition().y-112), true));
+            bullets.push_back(Bullet(textureMap["player"], 0, 15, sf::Vector2f(getPosition().x-25, getPosition().y-112), true));
             shootCooldown = (60 / shootSpeed);
         }
     }

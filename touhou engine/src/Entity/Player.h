@@ -6,10 +6,15 @@
 class Player : public Character
 {
 public:
-	Player(sf::RenderWindow&, sf::Texture&);
-	void updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet>& bullets);
+	Player(sf::RenderWindow& window,
+		std::map<std::string, sf::Texture>& textureMap
+	);
+	void updateSprite(sf::RenderWindow& window,
+		int frame,
+		std::vector<Bullet>& bullets,
+		std::map<std::string, sf::Texture>& textureMap
+	);
 private:
-	sf::Texture texture;
 	sf::Texture hitboxTexture;
 	sf::RectangleShape hitbox;
 	int leftPhase, rightPhase;

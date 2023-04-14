@@ -1,16 +1,24 @@
 #include "Pather.h"
 
-Pather::Pather(sf::RenderWindow& window, sf::Font& font, int screenWIn, int screenHIn)
-    : upKey(sf::Keyboard::Up), downKey(sf::Keyboard::Down), m1(sf::Mouse::Left),
+Pather::Pather(sf::RenderWindow& window,
+    sf::Font& font,
+    std::map<std::string, sf::Texture>& textureMap,
+    int screenWIn,
+    int screenHIn
+) :
+    upKey(sf::Keyboard::Up), downKey(sf::Keyboard::Down), m1(sf::Mouse::Left),
     pathRender(sf::LinesStrip), timeline(window.getSize().x, window.getSize().y, font),
     playableArea(sf::Vector2f(window.getSize().x * 0.7, window.getSize().y * 0.7)),
-    rKey(sf::Keyboard::R), m2(sf::Mouse::Right), backspace(sf::Keyboard::Backspace), delkey(sf::Keyboard::Delete)
+    rKey(sf::Keyboard::R), m2(sf::Mouse::Right), backspace(sf::Keyboard::Backspace),
+    delkey(sf::Keyboard::Delete
+)
 {
     SCREENHEIGHT = screenHIn;
     SCREENWIDTH = screenWIn;
 	inputText.setFont(font);
 
-    playableArea.setOrigin(playableArea.getSize().x / 2, playableArea.getSize().y / 2);
+    playableArea.setOrigin(playableArea.getSize().x / 2,
+        playableArea.getSize().y / 2);
     playableArea.setPosition(window.getSize().x / 2, window.getSize().y / 2);
     playableArea.setFillColor(sf::Color::Transparent);
     playableArea.setOutlineColor(sf::Color::White);
@@ -25,17 +33,16 @@ Pather::Pather(sf::RenderWindow& window, sf::Font& font, int screenWIn, int scre
     selectedEnemyIndex = -1;
     inputStr = "";
 
-    selectionTexture.loadFromFile("textures/tools/selection.png");
-    pencilTexture.loadFromFile("textures/tools/pencil.png");
-    duplicateTexture.loadFromFile("textures/tools/duplicate.png");
-
-    tools.push_back(Tool(selectionTexture, window.getSize().x / 25, window.getSize().y / 4, 64, 512, true)); // select enemy
-    tools.push_back(Tool(pencilTexture, window.getSize().x / 28*3, window.getSize().y / 4, 64, 512)); // draw path
-    tools.push_back(Tool(duplicateTexture, window.getSize().x / 25, window.getSize().y / 4 + 96, 64, 512)); // will duplicate then put copy under mouse to be moved wherever
+    tools.push_back(Tool(textureMap["selectionIcon"], window.getSize().x / 25,
+        window.getSize().y / 4, 64, 512, true)); // select enemy
+    tools.push_back(Tool(textureMap["pencilIcon"], window.getSize().x / 28 * 3,
+        window.getSize().y / 4, 64, 512)); // draw path
+    tools.push_back(Tool(textureMap["duplicateIcon"], window.getSize().x / 25,
+        window.getSize().y / 4 + 96, 64, 512)); // will duplicate then put copy under mouse to be moved wherever
 
     bulletPatternMenu.setPosition(14, playableArea.getPosition().y);
     bulletPatternMenu.setSize(180, playableArea.getSize().y/2);
-    bulletPatternMenu.setPatternFolder("patterns/");
+    bulletPatternMenu.setPatternFolder("patterns/", textureMap, font);
 
     selecting = false;
     canDuplicate = false;
@@ -54,7 +61,10 @@ void Pather::poll(sf::Event& event)
 }
 
 
-void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
+void Pather::update(sf::RenderWindow& window,
+    int& frame,
+    std::map<std::string, sf::Texture>& textureMap
+)
 {
     // make window on left for pattern selection
     // make stage loader to import stage or create new > enter stage len
@@ -72,20 +82,24 @@ void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
             stageLength = stoi(inputStr) > 0 ? stoi(inputStr)+1 : 0;
         if (inputStr != "")
-            frames = std::to_string(stoi(inputStr) / 60.).substr(0, std::to_string(stoi(inputStr) / 60.).size()-4);
+            frames = std::to_string(stoi(inputStr) / 60.).substr(0, 
+                std::to_string(stoi(inputStr) / 60.).size()-4);
         inputText.setPosition(window.getSize().x / 2, window.getSize().y / 2);
-        inputText.setString("Stage length = " + frames + " seconds\nEnter frames: " + inputStr);
+        inputText.setString("Stage length = " + frames +
+            " seconds\nEnter frames: " + inputStr);
         window.draw(inputText);
     }
     else
     {
-        mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+        mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
+            sf::Mouse::getPosition(window).y
+        );
 
         timeline.setStageLength(stageLength);
 
         if (tools[1].getStatus() && m2.consumeClick(frame, 20))
         {
-            patherEnemies.push_back(Enemy(0, texture));
+            patherEnemies.push_back(Enemy(0, textureMap["enemy"]));
             selectedEnemyIndex = patherEnemies.size() - 1;
             patherEnemies[selectedEnemyIndex].setPlayableArea(playableArea);
         }
@@ -94,7 +108,9 @@ void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
         {
             for (int i = 0; i < patherEnemies.size(); i++)
             {
-                if (!selecting && patherEnemies[i].getHitbox().contains(mousePos) && m1.consumeClick(frame, 20, 1))
+                if (!selecting && patherEnemies[i].getHitbox().contains(mousePos) &&
+                    m1.consumeClick(frame, 20, 1)
+                )
                 {
                     selectedEnemyIndex = i;
                     selecting = true;
@@ -148,8 +164,10 @@ void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
             if (m1.consumeClick(frame, 0) &&
                 selectedEnemyPath.size() < selectedEnemyPath.getPathSpeed() * 60 &&
                 sf::Mouse::getPosition(window).y < 0.85 * SCREENHEIGHT &&
-                sf::Mouse::getPosition(window).x > playableArea.getPosition().x - playableArea.getSize().x / 2 &&
-                sf::Mouse::getPosition(window).x < playableArea.getPosition().x + playableArea.getSize().x / 2)
+                sf::Mouse::getPosition(window).x > playableArea.getPosition().x - 
+                playableArea.getSize().x / 2 &&
+                sf::Mouse::getPosition(window).x < playableArea.getPosition().x + 
+                playableArea.getSize().x / 2)
                 patherEnemies[selectedEnemyIndex].pushToPath(patherToPlayable(
                     sf::Vector2f(mousePos.x, mousePos.y), playableArea, window));
         }
@@ -166,12 +184,14 @@ void Pather::update(sf::RenderWindow& window, int& frame, sf::Texture& texture)
             patherEnemies[selectedEnemyIndex].clearPath();
 
         if (upKey.consumeClick(frame, 5))
-            patherEnemies[selectedEnemyIndex].setPathSpeed(selectedEnemyPath.getPathSpeed() + 1);
+            patherEnemies[selectedEnemyIndex]
+            .setPathSpeed(selectedEnemyPath.getPathSpeed() + 1);
         if (downKey.consumeClick(frame, 5))
-            patherEnemies[selectedEnemyIndex].setPathSpeed(selectedEnemyPath.getPathSpeed() - 1);
+            patherEnemies[selectedEnemyIndex]
+            .setPathSpeed(selectedEnemyPath.getPathSpeed() - 1);
 
         // we only want to update this when we have selected an enemy
-        bulletPatternMenu.update(window, patherEnemies, selectedEnemyIndex);
+        bulletPatternMenu.update(window, frame, patherEnemies, selectedEnemyIndex, textureMap);
 
         draw(window, frame);
     }
@@ -221,7 +241,9 @@ void Pather::draw(sf::RenderWindow& window, int& frame)
     timeline.update(window, frame);
 
     for (Enemy& enemy : patherEnemies)
-        enemy.updateSprite(window, frame, patherBullets, timeline.getCurrentFrame());
+        enemy.updateSprite(window, frame, patherBullets, 
+            timeline.getCurrentFrame()
+        );
     for (Tool& tool : tools)
         tool.update(window, frame, tools);
 }

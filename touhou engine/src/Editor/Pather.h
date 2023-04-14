@@ -10,8 +10,16 @@
 class Pather
 {
 public:
-	Pather(sf::RenderWindow& window, sf::Font& font, int screenWIn, int screenHIn);
-	void update(sf::RenderWindow&, int& frame, sf::Texture& enemyTexture);
+	Pather(sf::RenderWindow& window,
+		sf::Font& font,
+		std::map<std::string, sf::Texture>& textureMap,
+		int screenWIn,
+		int screenHIn
+	);
+	void update(sf::RenderWindow&,
+		int& frame,
+		std::map<std::string, sf::Texture>& textureMap
+	);
 	void poll(sf::Event&);
 	Path getSelectedEnemyPath();
 private:
@@ -33,7 +41,6 @@ private:
 	int selectedEnemyIndex;
 	std::vector<Enemy> patherEnemies;
 	std::vector<Bullet> patherBullets;
-	sf::Texture selectionTexture, pencilTexture, duplicateTexture;
 	bool selecting, canDuplicate;
 	void draw(sf::RenderWindow& window, int& frame);
 };
