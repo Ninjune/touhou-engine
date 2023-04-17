@@ -11,7 +11,8 @@ BulletPattern::BulletPattern(std::string patternFolder, std::string fileName, sf
 	{
 		patternFile >> origin.x >> origin.y >> frequency >> burstCount >>
 			burstSize >> burstSizeChange >> direction >> directionChange >>
-			spawnDirection >> spawnDirectionChange >> velocity >> velocityChange;
+			spawnDirection >> spawnDirectionChange >> velocity >> velocityChange >> 
+			bulletType;
 		name = fileName;
 	}
 	else

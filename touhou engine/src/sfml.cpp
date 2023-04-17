@@ -30,7 +30,7 @@ int main()
 {
     std::map<std::string, sf::Texture> textureMap;
     defineTextures(textureMap);
-    int frame = 0, fps = 0;
+    int frame = 0, fps = 0, stageFrame = 0; // update stage frame when stage is loaded
     bool titleScreen = true, patherEnabled = false;
     sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "real touhou game");
     window.setFramerateLimit(60);
@@ -136,8 +136,7 @@ void defineTextures(std::map<std::string, sf::Texture>& textureMap)
     map(textureMap, "duplicateIcon", "textures/icons/duplicate.png");
     map(textureMap, "plusIcon", "textures/icons/plus.png");
     map(textureMap, "minusIcon", "textures/icons/minus.png");
-    map(textureMap, "upIcon", "textures/icons/up.png");
-    map(textureMap, "downIcon", "textures/icons/down.png");
+    map(textureMap, "upIcon", "textures/icons/upArrow.png");
 }
 
 

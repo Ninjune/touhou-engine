@@ -18,6 +18,7 @@ void Enemy::init(int type, sf::Texture& texture)
     moveX = 0;
     moveY = 0;
     point = 1;
+    startFrame = 0;
 
     setType(type);
     setTexture(texture);
@@ -28,7 +29,7 @@ void Enemy::init(int type, sf::Texture& texture)
 
 
 // note: do NOT call without setting texture
-void Enemy::updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet>& bullets, int currentFrame)
+void Enemy::updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet>& bullets, int stageFrame)
 {
     if (path.size() < 1) return;
     if (frame % 6 == 0) // 1/10 of a second
@@ -49,7 +50,7 @@ void Enemy::updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet
         }
     }
 
-    if (currentFrame == -1)
+    if (stageFrame == -1)
     {
         if (movementFrame > 0)
         {
@@ -61,20 +62,21 @@ void Enemy::updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet
         {
             moveX = 0;
             moveY = 0;
-            std::cout << timer.getElapsedTime().asMilliseconds() << " " << 60 * path.getPathSpeed() / path.size() << "\n";
-            moveToPoint(path[point], 60 * path.getPathSpeed() / path.size());
+            //std::cout << timer.getElapsedTime().asMilliseconds() << " " << 60 * path.getPathSpeed() / path.size() << "\n";
+            moveToPoint(path[point], 60 * path.getPathSpeed() / path.size()); 
             point++;
         }
     }
     else
     {
-        if (currentFrame < path.size())
-            sprite.setPosition(playableToPather(path[currentFrame], window));
+        if (stageFrame < path.size())
+            sprite.setPosition(playableToPather(path[stageFrame-startFrame], window)); // HERE
         else
             sprite.setPosition(playableToPather(path[path.size() - 1], window));
     }
 
-
+    if (stageFrame < startFrame || stageFrame > startFrame + path.size()) return setRender(false);
+    setRender(true);
     window.draw(sprite);
 }
 
@@ -124,6 +126,12 @@ void Enemy::setPlayableArea(sf::RectangleShape in) // means this enemy is in sta
 }
 
 
+void Enemy::setStartFrame(int in)
+{
+    startFrame = in;
+}
+
+
 void Enemy::pushToPath(sf::Vector2f point)
 {
     path.push_back(point);
@@ -154,6 +162,12 @@ void Enemy::eraseFromPatterns(std::string name)
 Path Enemy::getPath()
 {
     return path;
+}
+
+
+std::vector<BulletPattern> Enemy::getPatterns()
+{
+    return patterns;
 }
 
 

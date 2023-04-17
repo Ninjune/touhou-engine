@@ -13,7 +13,7 @@ public:
 	void update(sf::RenderWindow& window,
 		int& frame,
 		std::vector<Enemy>& enemies,
-		int selectedEnemyIndex,
+		int& selectedEnemyIndex,
 		std::map<std::string, sf::Texture>& textureMap
 	);
 private:

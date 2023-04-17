@@ -10,8 +10,8 @@ BulletPatternButton::BulletPatternButton(sf::Vector2f menuPos,
 	bulletPattern(pattern),
 	m1(sf::Mouse::Left)
 {
-	mainRectangle.setPosition(menuPos.x, menuPos.y + 30 * buttons.size() - 1);
-	mainRectangle.setSize(sf::Vector2f(menuSize.x, menuSize.y/9));
+	mainRectangle.setPosition(menuPos.x, menuPos.y + 32 * buttons.size() - 1);
+	mainRectangle.setSize(sf::Vector2f(menuSize.x, 32));
 	mainRectangle.setFillColor(sf::Color::Transparent);
 	mainRectangle.setOutlineColor(sf::Color::White);
 	mainRectangle.setOutlineThickness(1);
@@ -42,13 +42,19 @@ BulletPatternButton::BulletPatternButton(sf::Vector2f menuPos,
 void BulletPatternButton::update(sf::RenderWindow& window,
 	int& frame,
 	std::vector<Enemy>& enemies,
-	int selectedEnemyIndex,
+	int& selectedEnemyIndex,
 	std::map<std::string, sf::Texture>& textureMap
 ) 
 {
 	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
 		sf::Mouse::getPosition(window).y
 	);
+	std::vector<BulletPattern> patternCopy = enemies[selectedEnemyIndex].getPatterns();
+	added = false;
+
+	for (int i = 0; i < patternCopy.size(); i++)
+		if (patternCopy[i].getName() == getName())
+			added = true;
 
 	if (innerRectangle.getGlobalBounds().contains(mousePos) &&
 		m1.consumeClick(frame, 20)
@@ -91,17 +97,17 @@ bool BulletPatternButton::getStatus()
 
 void BulletPatternButton::moveUp()
 {
-	mainRectangle.move(0, 30);
-	patternName.move(0, 30);
-	innerRectangle.move(0, 30);
-	buttonSprite.move(0, 30);
+	mainRectangle.move(0, 32);
+	patternName.move(0, 32);
+	innerRectangle.move(0, 32);
+	buttonSprite.move(0, 32);
 }
 
 
 void BulletPatternButton::moveDown()
 {
-	mainRectangle.move(0, -30);
-	patternName.move(0, -30);
-	innerRectangle.move(0, -30);
-	buttonSprite.move(0, -30);
+	mainRectangle.move(0, -32);
+	patternName.move(0, -32);
+	innerRectangle.move(0, -32);
+	buttonSprite.move(0, -32);
 }

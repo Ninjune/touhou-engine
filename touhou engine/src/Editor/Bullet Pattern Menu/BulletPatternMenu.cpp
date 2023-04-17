@@ -56,14 +56,15 @@ void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 	);
 
 	upIcon.setTexture(textureMap["upIcon"]);
-	upIcon.setOrigin(16, 16);
+	upIcon.setOrigin(256, 0);
 	upIcon.setScale(32. / 512, 32. / 512);
 	upIcon.setPosition(upButton.getPosition().x, upButton.getPosition().y);
 
-	downIcon.setTexture(textureMap["downIcon"]);
-	downIcon.setOrigin(16, 16);
+	downIcon.setTexture(textureMap["upIcon"]);
+	downIcon.setRotation(180);
+	downIcon.setOrigin(256, 256);
 	downIcon.setScale(32. / 512, 32. / 512);
-	downIcon.setPosition(downButton.getPosition().x, upButton.getPosition().y);
+	downIcon.setPosition(downButton.getPosition().x, downButton.getPosition().y);
 
 	unsigned int count = 0;
 	for (std::filesystem::directory_entry file :
@@ -83,25 +84,24 @@ void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 	}
 	unsigned int temp;
 
-	for (int i = 1; i < bulletPatterns.size(); i++)
+	for (int i = 0; i < bulletPatterns.size() - 1; i++)
 	{
-		for (int j = 1; j < bulletPatterns.size(); j++)
+		for (int j = 0; j < bulletPatterns.size() - i - 1; j++)
 		{
-			if (bulletPatterns[buttonOrder[i]].getName() > bulletPatterns[buttonOrder[i - 1]].getName())
+			if (bulletPatterns[buttonOrder[j]].getName() > bulletPatterns[buttonOrder[j + 1]].getName())
 			{
-				temp = buttonOrder[i];
-				buttonOrder[i] = buttonOrder[i - 1];
-				buttonOrder[i - 1] = temp;
+				temp = buttonOrder[j];
+				buttonOrder[j] = buttonOrder[j - 1];
+				buttonOrder[j - 1] = temp;
 			}
 		}
-	}			
+	}
 }
-// HERE
 
 void BulletPatternMenu::update(sf::RenderWindow& window,
 	int& frame,
 	std::vector<Enemy>& enemies,
-	int selectedEnemyIndex,
+	int& selectedEnemyIndex,
 	std::map<std::string, sf::Texture>& textureMap
 )
 {
@@ -130,11 +130,11 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 	}
 	
 
-	for (int i = first; i <= last; i++)
+	for (int i = first; i <= last && i < bulletPatterns.size(); i++)
 		bulletPatterns[buttonOrder[i]].update(window, frame, enemies, selectedEnemyIndex, textureMap);
 
 	window.draw(menuRect);
-
+	
 	if (bulletPatterns.size() > 9)
 	{
 		window.draw(upButton);

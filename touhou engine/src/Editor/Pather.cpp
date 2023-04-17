@@ -40,8 +40,8 @@ Pather::Pather(sf::RenderWindow& window,
     tools.push_back(Tool(textureMap["duplicateIcon"], window.getSize().x / 25,
         window.getSize().y / 4 + 96, 64, 512)); // will duplicate then put copy under mouse to be moved wherever
 
-    bulletPatternMenu.setPosition(14, playableArea.getPosition().y+10);
-    bulletPatternMenu.setSize(180, playableArea.getSize().y/2-10);
+    bulletPatternMenu.setPosition(14, playableArea.getPosition().y-7);
+    bulletPatternMenu.setSize(180, playableArea.getSize().y/2+7);
     bulletPatternMenu.setPatternFolder("patterns/", textureMap, font);
 
     selecting = false;
@@ -97,11 +97,18 @@ void Pather::update(sf::RenderWindow& window,
 
         timeline.setStageLength(stageLength);
 
-        if (tools[1].getStatus() && m2.consumeClick(frame, 20))
+        if (tools[1].getStatus() && (m2.consumeClick(frame, 20) || (
+            selectedEnemyIndex == -1 &&
+                playableArea.getGlobalBounds().contains(mousePos) &&
+                m1.consumeClick(frame, 20, 2)
+                )
+            )
+        )
         {
             patherEnemies.push_back(Enemy(0, textureMap["enemy"]));
             selectedEnemyIndex = patherEnemies.size() - 1;
             patherEnemies[selectedEnemyIndex].setPlayableArea(playableArea);
+            patherEnemies[selectedEnemyIndex].setStartFrame(timeline.getCurrentFrame());
         }
 
         if (tools[0].getStatus() || tools[2].getStatus()) // select
@@ -119,8 +126,11 @@ void Pather::update(sf::RenderWindow& window,
                 }
             }
 
-            if (selectedEnemyIndex < 0)
+            if (selectedEnemyIndex < 0 || !patherEnemies[selectedEnemyIndex].getRender())
+            {
+                selectedEnemyIndex = -1;
                 return draw(window, frame);
+            }
 
             if (tools[2].getStatus() && canDuplicate)
             {

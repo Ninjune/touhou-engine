@@ -16,7 +16,9 @@ public:
 	void setPathSpeed(int);
 	void setPlayableArea(sf::RectangleShape in);
 	void setPosition(sf::Vector2f pos);
+	void setStartFrame(int);
 	Path getPath();
+	std::vector<BulletPattern> getPatterns();
 	void clearPath();
 	void pushToPath(sf::Vector2f point);
 	void pushToPatterns(BulletPattern pattern);
@@ -25,6 +27,7 @@ private:
 	void init(int type, sf::Texture& texture);
 	int movementFrame, point, enemyType; // type 0-3: small sprites, 
 	float moveX, moveY;
+	int startFrame;
 	void moveToPoint(sf::Vector2f, int framesToTake);
 	std::vector<Bullet> bullets;
 	bool pathFine;
