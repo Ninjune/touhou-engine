@@ -40,8 +40,8 @@ Pather::Pather(sf::RenderWindow& window,
     tools.push_back(Tool(textureMap["duplicateIcon"], window.getSize().x / 25,
         window.getSize().y / 4 + 96, 64, 512)); // will duplicate then put copy under mouse to be moved wherever
 
-    bulletPatternMenu.setPosition(14, playableArea.getPosition().y);
-    bulletPatternMenu.setSize(180, playableArea.getSize().y/2);
+    bulletPatternMenu.setPosition(14, playableArea.getPosition().y+10);
+    bulletPatternMenu.setSize(180, playableArea.getSize().y/2-10);
     bulletPatternMenu.setPatternFolder("patterns/", textureMap, font);
 
     selecting = false;

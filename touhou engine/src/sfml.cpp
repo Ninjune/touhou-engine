@@ -13,7 +13,8 @@ make sure to make instructions/readme explaining the premise of the game, contro
 #include "Editor/Pather.h"
 
 const int SCREENWIDTH = 1422, SCREENHEIGHT = 800;
-void defineTextures(std::map<std::string, sf::Texture>& map);
+void defineTextures(std::map<std::string, sf::Texture>& textureMap);
+void map(std::map<std::string, sf::Texture>& textureMap, std::string name, std::string texturePath);
 /*
 Todo:
 - Enemy bullets
@@ -127,27 +128,21 @@ int main()
 // defines the textures in the texture map.
 void defineTextures(std::map<std::string, sf::Texture>& textureMap)
 {
-    textureMap["player"] = sf::Texture();
-    textureMap["player"].loadFromFile("textures/player/pl00/player.png");
+    map(textureMap, "player", "textures/player/pl00/player.png");
+    map(textureMap, "enemy", "textures/enemy/enemy.png");
+    map(textureMap, "bullet1", "textures/bullet/bullet1.png");
+    map(textureMap, "selectionIcon", "textures/icons/selection.png");
+    map(textureMap, "pencilIcon", "textures/icons/pencil.png");
+    map(textureMap, "duplicateIcon", "textures/icons/duplicate.png");
+    map(textureMap, "plusIcon", "textures/icons/plus.png");
+    map(textureMap, "minusIcon", "textures/icons/minus.png");
+    map(textureMap, "upIcon", "textures/icons/up.png");
+    map(textureMap, "downIcon", "textures/icons/down.png");
+}
 
-    textureMap["enemy"] = sf::Texture();
-    textureMap["enemy"].loadFromFile("textures/enemy/enemy.png");
 
-    textureMap["bullet1"] = sf::Texture();
-    textureMap["bullet1"].loadFromFile("textures/bullet/bullet1.png");
-
-    textureMap["selectionIcon"] = sf::Texture();
-    textureMap["selectionIcon"].loadFromFile("textures/tools/selection.png");
-
-    textureMap["pencilIcon"] = sf::Texture();
-    textureMap["pencilIcon"].loadFromFile("textures/tools/pencil.png");
-
-    textureMap["duplicateIcon"] = sf::Texture();
-    textureMap["duplicateIcon"].loadFromFile("textures/tools/duplicate.png");
-
-    textureMap["plusIcon"] = sf::Texture();
-    textureMap["plusIcon"].loadFromFile("textures/tools/plus.png");
-
-    textureMap["minusIcon"] = sf::Texture();
-    textureMap["minusIcon"].loadFromFile("textures/tools/minus.png");
+void map(std::map<std::string, sf::Texture>& textureMap, std::string name, std::string texturePath)
+{
+    textureMap[name] = sf::Texture();
+    textureMap[name].loadFromFile(texturePath);
 }

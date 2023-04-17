@@ -6,10 +6,26 @@
 
 
 BulletPatternMenu::BulletPatternMenu()
+	: m1(sf::Mouse::Left)
 {
 	menuRect.setFillColor(sf::Color::Transparent);
 	menuRect.setOutlineColor(sf::Color::White);
 	menuRect.setOutlineThickness(1);
+
+	upButton.setSize(sf::Vector2f(32, 32));
+	upButton.setOrigin(upButton.getSize().x / 2, downButton.getSize().y / 2);
+	upButton.setOutlineColor(sf::Color::White);
+	upButton.setOutlineThickness(1);
+	upButton.setFillColor(sf::Color::Transparent);
+
+	downButton.setSize(sf::Vector2f(32, 32));
+	downButton.setOrigin(downButton.getSize().x / 2, downButton.getSize().y / 2);
+	downButton.setOutlineColor(sf::Color::White);
+	downButton.setOutlineThickness(1);
+	downButton.setFillColor(sf::Color::Transparent);
+
+	first = 0;
+	last = 8;
 }
 
 
@@ -32,7 +48,24 @@ void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 )
 {
 	std::string patternName;
+	upButton.setPosition(menuRect.getPosition().x + menuRect.getSize().x/2, 
+		menuRect.getPosition().y
+	);
+	downButton.setPosition(menuRect.getPosition().x + menuRect.getSize().x / 2,
+		menuRect.getPosition().y + menuRect.getSize().y - downButton.getSize().y/2
+	);
 
+	upIcon.setTexture(textureMap["upIcon"]);
+	upIcon.setOrigin(16, 16);
+	upIcon.setScale(32. / 512, 32. / 512);
+	upIcon.setPosition(upButton.getPosition().x, upButton.getPosition().y);
+
+	downIcon.setTexture(textureMap["downIcon"]);
+	downIcon.setOrigin(16, 16);
+	downIcon.setScale(32. / 512, 32. / 512);
+	downIcon.setPosition(downButton.getPosition().x, upButton.getPosition().y);
+
+	unsigned int count = 0;
 	for (std::filesystem::directory_entry file :
 	std::filesystem::directory_iterator(patternFolder))
 	{
@@ -44,10 +77,26 @@ void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 				bulletPatterns,
 				BulletPattern(patternFolder, patternName, textureMap["bullet"]),
 				font
-			));
-	}
-}
+		));
 
+		buttonOrder.push_back(count++);
+	}
+	unsigned int temp;
+
+	for (int i = 1; i < bulletPatterns.size(); i++)
+	{
+		for (int j = 1; j < bulletPatterns.size(); j++)
+		{
+			if (bulletPatterns[buttonOrder[i]].getName() > bulletPatterns[buttonOrder[i - 1]].getName())
+			{
+				temp = buttonOrder[i];
+				buttonOrder[i] = buttonOrder[i - 1];
+				buttonOrder[i - 1] = temp;
+			}
+		}
+	}			
+}
+// HERE
 
 void BulletPatternMenu::update(sf::RenderWindow& window,
 	int& frame,
@@ -56,7 +105,42 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 	std::map<std::string, sf::Texture>& textureMap
 )
 {
-	for (BulletPatternButton& button : bulletPatterns)
-		button.update(window, frame, enemies, selectedEnemyIndex, textureMap);
+	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
+		sf::Mouse::getPosition(window).y
+	);
+
+	if (m1.consumeClick(frame, 4))
+	{
+		if (upButton.getGlobalBounds().contains(mousePos) && first > 0)
+		{
+			first--;
+			last--;
+
+			for (BulletPatternButton& button : bulletPatterns)
+				button.moveUp();
+		}
+		else if (downButton.getGlobalBounds().contains(mousePos) && last < bulletPatterns.size()-1)
+		{
+			first++;
+			last++;
+
+			for (BulletPatternButton& button : bulletPatterns)
+				button.moveDown();
+		}
+	}
+	
+
+	for (int i = first; i <= last; i++)
+		bulletPatterns[buttonOrder[i]].update(window, frame, enemies, selectedEnemyIndex, textureMap);
+
 	window.draw(menuRect);
+
+	if (bulletPatterns.size() > 9)
+	{
+		window.draw(upButton);
+		window.draw(upIcon);
+
+		window.draw(downButton);
+		window.draw(downIcon);
+	}
 }

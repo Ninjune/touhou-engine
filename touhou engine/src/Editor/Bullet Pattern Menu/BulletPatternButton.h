@@ -19,6 +19,9 @@ public:
 		std::map<std::string, sf::Texture>& textureMap
 	);
 	bool getStatus();
+	std::string getName();
+	void moveUp();
+	void moveDown();
 private:
 	sf::Text patternName;
 	Keybind m1;
@@ -26,6 +29,6 @@ private:
 	sf::RectangleShape innerRectangle;
 	sf::Sprite buttonSprite;
 	BulletPattern bulletPattern;
-	int addedIndex;
+	bool added;
 };
 

@@ -132,29 +132,22 @@ void Enemy::pushToPath(sf::Vector2f point)
 }
 
 
-int Enemy::pushToPatterns(BulletPattern pattern) // returns index of pattern
+void Enemy::pushToPatterns(BulletPattern pattern) // returns index of pattern
 {
-    int foundIndex = -1;
-
-    for (int i = 0; i < patterns.size(); i++)
-    {
-        if(patterns[i].getName() == pattern.getName());
-            foundIndex = i;
-    }
-
-    if (foundIndex == -1)
-    {
-        patterns.push_back(pattern);
-        return patterns.size() - 1;
-    }
-    else
-        return foundIndex;
+    patterns.push_back(pattern);
 }
 
 
-void Enemy::eraseFromPatterns(int index)
+void Enemy::eraseFromPatterns(std::string name)
 {
-    patterns.erase(patterns.begin() + index);
+    int foundIndex = -1;
+
+    for (unsigned int i = 0; i < patterns.size(); i++)
+        if (patterns[i].getName() == name)
+            foundIndex = i;
+
+    if (foundIndex >= 0)
+        patterns.erase(patterns.begin() + foundIndex);
 }
 
 

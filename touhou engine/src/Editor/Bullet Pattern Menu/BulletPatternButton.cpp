@@ -16,7 +16,9 @@ BulletPatternButton::BulletPatternButton(sf::Vector2f menuPos,
 	mainRectangle.setOutlineColor(sf::Color::White);
 	mainRectangle.setOutlineThickness(1);
 	
-	patternName.setPosition(mainRectangle.getPosition().x, mainRectangle.getPosition().y);
+	patternName.setPosition(mainRectangle.getPosition().x, 
+		mainRectangle.getPosition().y
+	);
 	patternName.setCharacterSize(14);
 	patternName.setString(pattern.getName());
 	patternName.setFont(font);
@@ -28,9 +30,11 @@ BulletPatternButton::BulletPatternButton(sf::Vector2f menuPos,
 	innerRectangle.setOutlineColor(sf::Color::White);
 	innerRectangle.setOutlineThickness(1);
 
-	addedIndex = -1;
+	added = false;
 
-	buttonSprite.setPosition(innerRectangle.getPosition().x, innerRectangle.getPosition().y);
+	buttonSprite.setPosition(innerRectangle.getPosition().x, 
+		innerRectangle.getPosition().y
+	);
 	buttonSprite.setScale(32. / 512, 32. / 512);
 }
 
@@ -42,19 +46,27 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 	std::map<std::string, sf::Texture>& textureMap
 ) 
 {
-	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
-	if (innerRectangle.getGlobalBounds().contains(mousePos)  && m1.consumeClick(frame, 20))
+	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
+		sf::Mouse::getPosition(window).y
+	);
+
+	if (innerRectangle.getGlobalBounds().contains(mousePos) &&
+		m1.consumeClick(frame, 20)
+	)
 	{
-		if (addedIndex < 0)
-			addedIndex = enemies[selectedEnemyIndex].pushToPatterns(bulletPattern);
+		if (!added)
+		{
+			enemies[selectedEnemyIndex].pushToPatterns(bulletPattern);
+			added = true;
+		}
 		else
 		{
-			enemies[selectedEnemyIndex].eraseFromPatterns(addedIndex);
-			addedIndex = -1;
+			enemies[selectedEnemyIndex].eraseFromPatterns(bulletPattern.getName());
+			added = false;
 		}
 	}
 
-	if (addedIndex < 0)
+	if (!added)
 		buttonSprite.setTexture(textureMap["plusIcon"]);
 	else
 		buttonSprite.setTexture(textureMap["minusIcon"]);
@@ -63,4 +75,33 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 	window.draw(mainRectangle);
 	window.draw(innerRectangle);
 	window.draw(buttonSprite);
+}
+
+
+std::string BulletPatternButton::getName()
+{
+	return patternName.getString();
+}
+
+
+bool BulletPatternButton::getStatus()
+{
+	return added;
+}
+
+void BulletPatternButton::moveUp()
+{
+	mainRectangle.move(0, 30);
+	patternName.move(0, 30);
+	innerRectangle.move(0, 30);
+	buttonSprite.move(0, 30);
+}
+
+
+void BulletPatternButton::moveDown()
+{
+	mainRectangle.move(0, -30);
+	patternName.move(0, -30);
+	innerRectangle.move(0, -30);
+	buttonSprite.move(0, -30);
 }
