@@ -69,8 +69,8 @@ void Enemy::updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet
     }
     else
     {
-        if (stageFrame < path.size())
-            sprite.setPosition(playableToPather(path[stageFrame-startFrame], window)); // HERE
+        if (stageFrame >= startFrame && stageFrame < startFrame + path.size())
+            sprite.setPosition(playableToPather(path[stageFrame-startFrame], window));
         else
             sprite.setPosition(playableToPather(path[path.size() - 1], window));
     }
@@ -168,6 +168,12 @@ Path Enemy::getPath()
 std::vector<BulletPattern> Enemy::getPatterns()
 {
     return patterns;
+}
+
+
+int Enemy::getStartFrame()
+{
+    return startFrame;
 }
 
 

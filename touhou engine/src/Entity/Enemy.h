@@ -19,6 +19,7 @@ public:
 	void setStartFrame(int);
 	Path getPath();
 	std::vector<BulletPattern> getPatterns();
+	int getStartFrame();
 	void clearPath();
 	void pushToPath(sf::Vector2f point);
 	void pushToPatterns(BulletPattern pattern);
