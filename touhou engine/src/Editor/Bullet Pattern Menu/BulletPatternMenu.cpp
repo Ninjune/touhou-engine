@@ -1,5 +1,4 @@
 #include <string>
-#include <iostream>
 #include <filesystem>
 #include "BulletPatternMenu.h"
 #include "../../Entity/Enemy.h"
@@ -44,7 +43,8 @@ void BulletPatternMenu::setSize(float menuW, float menuH)
 // call after setting position and size.
 void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 	std::map<std::string, sf::Texture>& textureMap,
-	sf::Font& font
+	sf::Font& font,
+	std::map<std::string, BulletPattern>& patterns
 )
 {
 	std::string patternName;
@@ -67,16 +67,16 @@ void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 	downIcon.setPosition(downButton.getPosition().x, downButton.getPosition().y);
 
 	unsigned int count = 0;
-	for (std::filesystem::directory_entry file :
-	std::filesystem::directory_iterator(patternFolder))
+	for (std::map<std::string, BulletPattern>::iterator iterator = patterns.begin();
+	iterator != patterns.end(); iterator++)
 	{
-		patternName = file.path().string().substr(9, file.path().string().find_first_of(".")-9);
+		patternName = iterator->second.getName();
 
-		bulletPatterns.push_back(
+		buttons.push_back(
 			BulletPatternButton(menuRect.getPosition(),
 				menuRect.getSize(),
-				bulletPatterns,
-				BulletPattern(patternFolder, patternName, textureMap["bullet"]),
+				buttons,
+				patterns[patternName],
 				font
 		));
 
@@ -84,11 +84,11 @@ void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 	}
 	unsigned int temp;
 
-	for (int i = 0; i < bulletPatterns.size() - 1; i++)
+	for (int i = 0; i < buttons.size() - 1; i++)
 	{
-		for (int j = 0; j < bulletPatterns.size() - i - 1; j++)
+		for (int j = 0; j < buttons.size() - i - 1; j++)
 		{
-			if (bulletPatterns[buttonOrder[j]].getName() > bulletPatterns[buttonOrder[j + 1]].getName())
+			if (buttons[buttonOrder[j]].getName() > buttons[buttonOrder[j + 1]].getName())
 			{
 				temp = buttonOrder[j];
 				buttonOrder[j] = buttonOrder[j - 1];
@@ -102,7 +102,8 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 	int& frame,
 	std::vector<Enemy>& enemies,
 	int& selectedEnemyIndex,
-	std::map<std::string, sf::Texture>& textureMap
+	std::map<std::string, sf::Texture>& textureMap,
+	int currentFrame
 )
 {
 	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
@@ -116,26 +117,27 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 			first--;
 			last--;
 
-			for (BulletPatternButton& button : bulletPatterns)
+			for (BulletPatternButton& button : buttons)
 				button.moveUp();
 		}
-		else if (downButton.getGlobalBounds().contains(mousePos) && last < bulletPatterns.size()-1)
+		else if (downButton.getGlobalBounds().contains(mousePos) &&
+			last < buttons.size()-1)
 		{
 			first++;
 			last++;
 
-			for (BulletPatternButton& button : bulletPatterns)
+			for (BulletPatternButton& button : buttons)
 				button.moveDown();
 		}
 	}
 	
 
-	for (int i = first; i <= last && i < bulletPatterns.size(); i++)
-		bulletPatterns[buttonOrder[i]].update(window, frame, enemies, selectedEnemyIndex, textureMap);
+	for (int i = first; i <= last && i < buttons.size(); i++)
+		buttons[buttonOrder[i]].update(window, frame, enemies, selectedEnemyIndex, textureMap, currentFrame);
 
 	window.draw(menuRect);
 	
-	if (bulletPatterns.size() > 9)
+	if (buttons.size() > 9)
 	{
 		window.draw(upButton);
 		window.draw(upIcon);

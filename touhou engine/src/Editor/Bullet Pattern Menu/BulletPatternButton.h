@@ -16,7 +16,8 @@ public:
 		int& frame,
 		std::vector<Enemy>& enemies,
 		int& selectedEnemyIndex,
-		std::map<std::string, sf::Texture>& textureMap
+		std::map<std::string, sf::Texture>& textureMap,
+		int currentFrame
 	);
 	bool getStatus();
 	std::string getName();

@@ -14,11 +14,13 @@ public:
 		sf::Font& font,
 		std::map<std::string, sf::Texture>& textureMap,
 		int screenWIn,
-		int screenHIn
+		int screenHIn,
+		std::map<std::string, BulletPattern>& patterns
 	);
 	void update(sf::RenderWindow&,
 		int& frame,
-		std::map<std::string, sf::Texture>& textureMap
+		std::map<std::string, sf::Texture>& textureMap,
+		std::map<std::string, BulletPattern>& patterns
 	);
 	void poll(sf::Event&);
 	Path getSelectedEnemyPath();
@@ -43,7 +45,10 @@ private:
 	std::vector<Bullet> patherBullets;
 	bool selecting, canDuplicate, enterStageName;
 
-	void draw(sf::RenderWindow& window, int& frame);
+	void draw(sf::RenderWindow& window,
+		int& frame,
+		std::map<std::string, BulletPattern>& patterns
+	);
 	void prompt(sf::RenderWindow& window, std::string input);
 	bool selectTool(sf::RenderWindow& window, int& frame);
 	bool drawTool(sf::RenderWindow& window, int& frame);

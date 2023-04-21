@@ -5,8 +5,17 @@
 class Bullet : public Character
 {
 public:
-	Bullet(sf::Texture&, int, float, sf::Vector2f, bool);
-	Bullet(sf::Texture&, int, float, sf::Vector2f);
+	Bullet(sf::Texture& texture,
+		int type,
+		float speed,
+		sf::Vector2f origin,
+		bool playerOwned
+	);
+	Bullet(sf::Texture& texture,
+		int type,
+		float speed,
+		sf::Vector2f origin
+	);
 	void updateSprite(sf::RenderWindow& window, int frame);
 	float getBulletSpeed();
 	void setBulletSpeed(float);

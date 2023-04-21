@@ -1,10 +1,31 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "../Entity/Bullet.h"
+
 
 class BulletPattern
 {
 public:
-	BulletPattern(std::string patternFolder, std::string fileName, sf::Texture& bulletTexture);
+	BulletPattern();
+	BulletPattern(sf::Vector2f origin,
+		int frequencyIn,
+		int burstCountIn,
+		int burstSizeIn,
+		int burstSizeChangeIn,
+		int directionIn,
+		int directionChangeIn,
+		int spawnDirectionIn,
+		int spawnDirectionChangeIn,
+		double velocityIn,
+		double velocityChangeIn,
+		std::string bulletTypeIn,
+		std::string nameIn
+	);
+	void update(std::vector<Bullet> bullets,
+		int& stageFrame,
+		sf::Vector2f origin,
+		int fireFrameIn
+	);
 	std::string getName();
 private:
 	sf::Vector2f origin;
@@ -15,4 +36,5 @@ private:
 	double velocity, velocityChange;
 	std::string bulletType;
 	std::string name;
+	std::vector<int> reservedBullets;
 };

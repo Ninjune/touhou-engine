@@ -1,19 +1,34 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet(sf::Texture& texture, int type, float speed, sf::Vector2f spawnPos, bool playerOwned)
+Bullet::Bullet(sf::Texture& texture,
+    int type,
+    float speed,
+    sf::Vector2f spawnPos,
+    bool playerOwned
+)
 {
     setup(texture, type, speed, spawnPos, playerOwned);
 }
 
 
-Bullet::Bullet(sf::Texture& texture, int type, float speed, sf::Vector2f spawnPos)
+Bullet::Bullet(sf::Texture& texture,
+    int type,
+    float speed,
+    sf::Vector2f
+    spawnPos
+)
 {
     setup(texture, type, speed, spawnPos, false);
 }
 
 
-void Bullet::setup(sf::Texture& texture, int type, float speed, sf::Vector2f spawnPos, bool playerOwned)
+void Bullet::setup(sf::Texture& texture,
+    int type,
+    float speed,
+    sf::Vector2f spawnPos,
+    bool playerOwned
+)
 {
     spriteWidth = 16;
     spriteHeight = 32;

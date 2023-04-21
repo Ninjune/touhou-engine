@@ -8,8 +8,15 @@
 class Enemy : public Character
 {
 public:
-	Enemy(int type, sf::Texture& texture);
-	void updateSprite(sf::RenderWindow& window, int frame, std::vector<Bullet>& bullets, int currentFrame = -1);
+	Enemy(int type,
+		sf::Texture& texture
+	);
+	void updateSprite(sf::RenderWindow& window,
+		int frame,
+		std::vector<Bullet>& bullets,
+		std::map<std::string, BulletPattern>& patterns,
+		int currentFrame = -1
+	);
 	bool isPathFine();
 	void setTexture(sf::Texture& texture);
 	void setType(int type);
@@ -18,14 +25,17 @@ public:
 	void setPosition(sf::Vector2f pos);
 	void setStartFrame(int);
 	Path getPath();
-	std::vector<BulletPattern> getPatterns();
+	std::vector<std::string> getPatterns();
+	std::vector<int> getStartTimes();
 	int getStartFrame();
 	void clearPath();
 	void pushToPath(sf::Vector2f point);
-	void pushToPatterns(BulletPattern pattern);
+	void pushToPatterns(std::string pattern, int startTime);
 	void eraseFromPatterns(std::string name);
 private:
-	void init(int type, sf::Texture& texture);
+	void init(int type, 
+		sf::Texture& texture
+	);
 	int movementFrame, point, enemyType; // type 0-3: small sprites, 
 	float moveX, moveY;
 	int startFrame;
@@ -33,7 +43,8 @@ private:
 	std::vector<Bullet> bullets;
 	bool pathFine;
 	sf::Clock timer;
-	std::vector<BulletPattern> patterns;
+	std::vector<std::string> activePatterns;
+	std::vector<int> patternStartTimes;
 	Path path;
 	sf::RectangleShape playableArea;
 	sf::Vector2f playableToPather(sf::Vector2f point, sf::RenderWindow& window); // maybe add some like static global function for this if can

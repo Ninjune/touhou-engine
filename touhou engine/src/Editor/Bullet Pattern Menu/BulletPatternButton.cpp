@@ -43,17 +43,18 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 	int& frame,
 	std::vector<Enemy>& enemies,
 	int& selectedEnemyIndex,
-	std::map<std::string, sf::Texture>& textureMap
+	std::map<std::string, sf::Texture>& textureMap,
+	int currentFrame
 ) 
 {
 	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
 		sf::Mouse::getPosition(window).y
 	);
-	std::vector<BulletPattern> patternCopy = enemies[selectedEnemyIndex].getPatterns();
+	std::vector<std::string> patternCopy = enemies[selectedEnemyIndex].getPatterns();
 	added = false;
 
 	for (int i = 0; i < patternCopy.size(); i++)
-		if (patternCopy[i].getName() == getName())
+		if (patternCopy[i] == getName())
 			added = true;
 
 	if (innerRectangle.getGlobalBounds().contains(mousePos) &&
@@ -62,7 +63,7 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 	{
 		if (!added)
 		{
-			enemies[selectedEnemyIndex].pushToPatterns(bulletPattern);
+			enemies[selectedEnemyIndex].pushToPatterns(bulletPattern.getName(), currentFrame);
 			added = true;
 		}
 		else

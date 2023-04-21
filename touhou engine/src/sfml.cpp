@@ -6,6 +6,8 @@ make sure to make instructions/readme explaining the premise of the game, contro
 #include <vector>
 #include <chrono>
 #include <map>
+#include <filesystem>
+#include <fstream>
 #include "Entity/Player.h"
 #include "Entity/Bullet.h"
 #include "Entity/Enemy.h"
@@ -14,6 +16,7 @@ make sure to make instructions/readme explaining the premise of the game, contro
 
 const int SCREENWIDTH = 1422, SCREENHEIGHT = 800;
 void defineTextures(std::map<std::string, sf::Texture>& textureMap);
+void definePatterns(std::map<std::string, BulletPattern>&);
 void map(std::map<std::string, sf::Texture>& textureMap, std::string name, std::string texturePath);
 /*
 Todo:
@@ -29,7 +32,9 @@ Todo:
 int main()
 {
     std::map<std::string, sf::Texture> textureMap;
+    std::map<std::string, BulletPattern> patterns;
     defineTextures(textureMap);
+    definePatterns(patterns);
     int frame = 0, fps = 0, stageFrame = 0; // update stage frame when stage is loaded
     bool titleScreen = true, patherEnabled = false;
     sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "real touhou game");
@@ -45,7 +50,7 @@ int main()
 
     Player player(window, textureMap);
     Keybind eKey(sf::Keyboard::E), pKey(sf::Keyboard::P), RBracketKey(sf::Keyboard::RBracket);
-    Pather pather(window, font, textureMap, SCREENWIDTH, SCREENHEIGHT);
+    Pather pather(window, font, textureMap, SCREENWIDTH, SCREENHEIGHT, patterns);
     std::vector<Enemy> enemies, enemiesTemp;
     std::vector<Bullet> bullets, bulletsTemp;
 
@@ -100,11 +105,11 @@ int main()
                 if (!enemies[i].getRender())
                     enemies.erase(enemies.begin() + i);
                 else
-                    enemies[i].updateSprite(window, frame, bullets);
+                    enemies[i].updateSprite(window, frame, bullets, patterns);
             }
 
             if (patherEnabled) // make pather draw everything in window
-                pather.update(window, frame, textureMap);
+                pather.update(window, frame, textureMap, patterns);
 
             for (unsigned int i = 0; i < enemies.size(); i++)
             {
@@ -144,4 +149,45 @@ void map(std::map<std::string, sf::Texture>& textureMap, std::string name, std::
 {
     textureMap[name] = sf::Texture();
     textureMap[name].loadFromFile(texturePath);
+}
+
+
+void definePatterns(std::map<std::string, BulletPattern>& patterns)
+{
+    const std::string folderName = "patterns/";
+    std::string patternName;
+    unsigned int count = 0;
+
+    // all of these will be passed through to BulletPattern
+    sf::Vector2f origin;
+    int frequency, burstCount,
+        burstSize, burstSizeChange,
+        direction, directionChange,
+        spawnDirection, spawnDirectionChange;
+    double velocity, velocityChange;
+    std::string bulletType;
+
+    std::fstream patternFile;
+
+    for (std::filesystem::directory_entry file :
+    std::filesystem::directory_iterator(folderName))
+    {
+        patternName = file.path().string().substr(9, file.path().string().find_first_of(".") - 9);
+        patternFile.open(folderName + "/" + patternName + ".txt");
+
+        if (patternFile.is_open())
+        {
+            patternFile >> origin.x >> origin.y >> frequency >> burstCount >>
+                burstSize >> burstSizeChange >> direction >> directionChange >>
+                spawnDirection >> spawnDirectionChange >> velocity >> velocityChange >>
+                bulletType;
+        }
+        else
+            throw "file not found?";
+
+        patterns[patternName] = BulletPattern(origin, frequency, burstCount, 
+            burstSize, burstSizeChange, direction, directionChange, spawnDirection,
+            spawnDirectionChange, velocity, velocityChange, bulletType, patternName
+        );
+    }
 }

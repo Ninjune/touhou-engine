@@ -7,7 +7,8 @@ Pather::Pather(sf::RenderWindow& window,
     sf::Font& font,
     std::map<std::string, sf::Texture>& textureMap,
     int screenWIn,
-    int screenHIn
+    int screenHIn,
+    std::map<std::string, BulletPattern>& patterns
 ) :
     upKey(sf::Keyboard::Up), downKey(sf::Keyboard::Down), m1(sf::Mouse::Left),
     pathRender(sf::LinesStrip), timeline(window.getSize().x, window.getSize().y, font),
@@ -44,7 +45,7 @@ Pather::Pather(sf::RenderWindow& window,
 
     bulletPatternMenu.setPosition(14, playableArea.getPosition().y-7);
     bulletPatternMenu.setSize(180, playableArea.getSize().y/2+7);
-    bulletPatternMenu.setPatternFolder("patterns/", textureMap, font);
+    bulletPatternMenu.setPatternFolder("patterns/", textureMap, font, patterns);
 
     selecting = false;
     canDuplicate = false;
@@ -73,7 +74,8 @@ void Pather::poll(sf::Event& event)
 
 void Pather::update(sf::RenderWindow& window,
     int& frame,
-    std::map<std::string, sf::Texture>& textureMap
+    std::map<std::string, sf::Texture>& textureMap,
+    std::map<std::string, BulletPattern>& patterns
 )
 {
     // make stage loader to import stage or create new > enter stage len
@@ -94,17 +96,16 @@ void Pather::update(sf::RenderWindow& window,
     }
     else if (enterStageName)
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) // export
         {
             std::fstream stageFile;
 
             stageFile.open("stages/" + inputStr + ".stg", std::ios::out);
-            if (!stageFile.is_open())
-                std::cout << "hhh";
+
             stageFile << stageLength << "\n";
 
             for (Enemy& enemy : patherEnemies)
-                stageFile << enemy.getStartFrame() << " ";
+                stageFile << enemy.getStartFrame() << ",";
             
             stageFile << "\n";
 
@@ -115,6 +116,24 @@ void Pather::update(sf::RenderWindow& window,
                 for (sf::Vector2f& point : path)
                     stageFile << point.x << "," << point.y << " ";
 
+                stageFile << ";";
+            }
+
+            stageFile << "\n";
+
+            for (Enemy& enemy : patherEnemies)
+            {
+                for (std::string& pattern : enemy.getPatterns())
+                    stageFile << pattern << ",";
+                stageFile << ";";
+            }
+
+            stageFile << "\n";
+
+            for (Enemy& enemy : patherEnemies)
+            {
+                for (int& start : enemy.getStartTimes())
+                    stageFile << start << ",";
                 stageFile << ";";
             }
 
@@ -159,7 +178,7 @@ void Pather::update(sf::RenderWindow& window,
             continuing = drawTool(window, frame);
 
         if(!continuing)
-            return draw(window, frame);
+            return draw(window, frame, patterns);
 
         Path selectedEnemyPath = patherEnemies[selectedEnemyIndex].getPath();
 
@@ -181,9 +200,9 @@ void Pather::update(sf::RenderWindow& window,
         
 
         // we only want to update this when we have selected an enemy
-        bulletPatternMenu.update(window, frame, patherEnemies, selectedEnemyIndex, textureMap);
+        bulletPatternMenu.update(window, frame, patherEnemies, selectedEnemyIndex, textureMap, timeline.getCurrentFrame());
 
-        draw(window, frame);
+        draw(window, frame, patterns);
     }
 }
 
@@ -224,14 +243,17 @@ Path Pather::getSelectedEnemyPath()
 }
 
 
-void Pather::draw(sf::RenderWindow& window, int& frame)
+void Pather::draw(sf::RenderWindow& window,
+    int& frame,
+    std::map<std::string, BulletPattern>& patterns
+)
 {
     window.draw(pathRender);
     window.draw(playableArea);
     timeline.update(window, frame);
 
     for (Enemy& enemy : patherEnemies)
-        enemy.updateSprite(window, frame, patherBullets, 
+        enemy.updateSprite(window, frame, patherBullets, patterns,
             timeline.getCurrentFrame()
         );
     for (Tool& tool : tools)
