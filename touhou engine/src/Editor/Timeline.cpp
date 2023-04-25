@@ -129,14 +129,11 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 	window.draw(playTriangle);
 	window.draw(frameText);
 }
-// 6 frames/12 max frames = x = middle of outerRectangle
-// todo: set innerRectangle pos to the bounding box that is pressed, set boundingBoxes in outerRectangle with
-// length of maxFrames, make mouse update innerRectangle position if clicked in diff boundingBox
-// arrow keys to advance 1 frame, shift + arrow keys to advance 10 frames
+
+
 void Timeline::setStageLength(int in)
 {
 	stageLength = in;
-	// setting bounds here so I don't reset them every frame.
 	bounds.clear();
 	sf::FloatRect tempRect;
 	for (int i = 0; i < stageLength; i++)

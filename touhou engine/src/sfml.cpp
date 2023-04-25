@@ -105,7 +105,7 @@ int main()
                 if (!enemies[i].getRender())
                     enemies.erase(enemies.begin() + i);
                 else
-                    enemies[i].updateSprite(window, frame, bullets, patterns);
+                    enemies[i].updateSprite(textureMap, window, frame, bullets);
             }
 
             if (patherEnabled) // make pather draw everything in window

@@ -84,9 +84,9 @@ void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 	}
 	unsigned int temp;
 
-	for (int i = 0; i < buttons.size() - 1; i++)
+	for (unsigned int i = 0; i < buttons.size() - 1; i++)
 	{
-		for (int j = 0; j < buttons.size() - i - 1; j++)
+		for (unsigned int j = 0; j < buttons.size() - i - 1; j++)
 		{
 			if (buttons[buttonOrder[j]].getName() > buttons[buttonOrder[j + 1]].getName())
 			{
@@ -132,7 +132,7 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 	}
 	
 
-	for (int i = first; i <= last && i < buttons.size(); i++)
+	for (unsigned int i = first; i <= last && i < buttons.size(); i++)
 		buttons[buttonOrder[i]].update(window, frame, enemies, selectedEnemyIndex, textureMap, currentFrame);
 
 	window.draw(menuRect);

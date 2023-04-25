@@ -53,7 +53,7 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 	std::vector<std::string> patternCopy = enemies[selectedEnemyIndex].getPatterns();
 	added = false;
 
-	for (int i = 0; i < patternCopy.size(); i++)
+	for (unsigned int i = 0; i < patternCopy.size(); i++)
 		if (patternCopy[i] == getName())
 			added = true;
 
@@ -63,7 +63,7 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 	{
 		if (!added)
 		{
-			enemies[selectedEnemyIndex].pushToPatterns(bulletPattern.getName(), currentFrame);
+			enemies[selectedEnemyIndex].pushToPatterns(bulletPattern, currentFrame);
 			added = true;
 		}
 		else

@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream> // TEMP
 #include "Pather.h"
+// NOTE lower fps than normal in editor.
 
 
 Pather::Pather(sf::RenderWindow& window,
@@ -178,7 +179,7 @@ void Pather::update(sf::RenderWindow& window,
             continuing = drawTool(window, frame);
 
         if(!continuing)
-            return draw(window, frame, patterns);
+            return draw(textureMap, window, frame, patterns);
 
         Path selectedEnemyPath = patherEnemies[selectedEnemyIndex].getPath();
 
@@ -202,7 +203,7 @@ void Pather::update(sf::RenderWindow& window,
         // we only want to update this when we have selected an enemy
         bulletPatternMenu.update(window, frame, patherEnemies, selectedEnemyIndex, textureMap, timeline.getCurrentFrame());
 
-        draw(window, frame, patterns);
+        draw(textureMap, window, frame, patterns);
     }
 }
 
@@ -243,7 +244,8 @@ Path Pather::getSelectedEnemyPath()
 }
 
 
-void Pather::draw(sf::RenderWindow& window,
+void Pather::draw(std::map<std::string, sf::Texture> textureMap,
+    sf::RenderWindow& window,
     int& frame,
     std::map<std::string, BulletPattern>& patterns
 )
@@ -253,9 +255,8 @@ void Pather::draw(sf::RenderWindow& window,
     timeline.update(window, frame);
 
     for (Enemy& enemy : patherEnemies)
-        enemy.updateSprite(window, frame, patherBullets, patterns,
-            timeline.getCurrentFrame()
-        );
+        enemy.updateSprite(textureMap, window, frame,
+            patherBullets, timeline.getCurrentFrame());
     for (Tool& tool : tools)
         tool.update(window, frame, tools);
 }
@@ -275,7 +276,7 @@ void Pather::prompt(sf::RenderWindow& window, std::string input)
 
 bool Pather::selectTool(sf::RenderWindow& window, int& frame)
 {
-    for (int i = 0; i < patherEnemies.size(); i++)
+    for (unsigned int i = 0; i < patherEnemies.size(); i++)
     {
         if (!selecting &&
             patherEnemies[i].getHitbox().contains(mousePos) &&

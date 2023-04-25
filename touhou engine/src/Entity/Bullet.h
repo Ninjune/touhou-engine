@@ -5,16 +5,14 @@
 class Bullet : public Character
 {
 public:
-	Bullet(sf::Texture& texture,
-		int type,
-		float speed,
-		sf::Vector2f origin,
-		bool playerOwned
-	);
-	Bullet(sf::Texture& texture,
-		int type,
-		float speed,
-		sf::Vector2f origin
+	Bullet();
+	Bullet(std::map<std::string, sf::Texture>& textureMap,
+		sf::Vector2f originIn,
+		int directionIn,
+		int spawnDirectionIn,
+		double velocityIn,
+		std::string bulletTypeIn,
+		bool playerOwned = false
 	);
 	void updateSprite(sf::RenderWindow& window, int frame);
 	float getBulletSpeed();
@@ -23,10 +21,15 @@ public:
 	void setBulletType(int);
 	bool isPlayerOwned();
 private:
-	void setup(sf::Texture&, int, float, sf::Vector2f, bool);
-	bool first;
+	void setup(std::map<std::string, sf::Texture>& textureMap,
+		sf::Vector2f originIn,
+		int directionIn,
+		int spawnDirectionIn,
+		double velocityIn,
+		std::string bulletTypeIn,
+		bool playerOwned
+	);
 	int aliveFrames, bulletType; // 0 = player, 
 	float xOffset, bulletSpeed; // negative = go up, pos = go down
 	bool playerOwned;
-	sf::Vector2f spawnPosition;
 };

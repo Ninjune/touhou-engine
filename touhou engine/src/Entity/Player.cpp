@@ -80,7 +80,8 @@ void Player::updateSprite(sf::RenderWindow& window,
 
                 goingDirection = true;
 
-                if(sprite.getPosition().x - sprite.getOrigin().x*2 - movementKeyMap[key].x > 0)
+                if(sprite.getPosition().x - sprite.getOrigin().x*2 -
+                    movementKeyMap[key].x > 0)
                     sprite.move(movementKeyMap[key]);
             }
             else if (movementKeyMap[key].x > 0) // right
@@ -92,17 +93,20 @@ void Player::updateSprite(sf::RenderWindow& window,
 
                 goingDirection = true;
 
-                if (sprite.getPosition().x + sprite.getOrigin().x*2  - movementKeyMap[key].x < window.getSize().x)
+                if (sprite.getPosition().x + sprite.getOrigin().x*2  - 
+                    movementKeyMap[key].x < window.getSize().x)
                     sprite.move(movementKeyMap[key]);
             }
             else if (movementKeyMap[key].y < 0) // up
             {
-                if (sprite.getPosition().y - sprite.getOrigin().y * 2 - movementKeyMap[key].y > 0)
+                if (sprite.getPosition().y - sprite.getOrigin().y * 2 - 
+                    movementKeyMap[key].y > 0)
                     sprite.move(movementKeyMap[key]);
             }
             else if (movementKeyMap[key].y > 0) // down
             {
-                if (sprite.getPosition().y + sprite.getOrigin().y*2 - movementKeyMap[key].y < window.getSize().y)
+                if (sprite.getPosition().y + sprite.getOrigin().y*2 - 
+                    movementKeyMap[key].y < window.getSize().y)
                     sprite.move(movementKeyMap[key]);
             }
         }
@@ -153,8 +157,8 @@ void Player::updateSprite(sf::RenderWindow& window,
     {
         if (shootCooldown <= 0)
         {
-            bullets.push_back(Bullet(textureMap["player"], 0, 15, sf::Vector2f(getPosition().x, getPosition().y-112), true));
-            bullets.push_back(Bullet(textureMap["player"], 0, 15, sf::Vector2f(getPosition().x-25, getPosition().y-112), true));
+            bullets.push_back(Bullet(textureMap, sf::Vector2f(getPosition().x, getPosition().y - 112), 270, -1, 15, "", true));
+            bullets.push_back(Bullet(textureMap, sf::Vector2f(getPosition().x-25, getPosition().y - 112), 270, -1, 15, "", true));
             shootCooldown = (60 / shootSpeed);
         }
     }

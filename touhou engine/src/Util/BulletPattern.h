@@ -21,10 +21,11 @@ public:
 		std::string bulletTypeIn,
 		std::string nameIn
 	);
-	void update(std::vector<Bullet> bullets,
+	void update(std::map<std::string, sf::Texture>& textureMap,
+		std::vector<Bullet> bullets,
 		int& stageFrame,
 		sf::Vector2f origin,
-		int fireFrameIn
+		int fireFrame
 	);
 	std::string getName();
 private:

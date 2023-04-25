@@ -7,6 +7,8 @@
 #include "Tool.h"
 #include "Bullet Pattern Menu/BulletPatternMenu.h"
 // this is the "stage editor".
+
+
 class Pather
 {
 public:
@@ -45,7 +47,8 @@ private:
 	std::vector<Bullet> patherBullets;
 	bool selecting, canDuplicate, enterStageName;
 
-	void draw(sf::RenderWindow& window,
+	void draw(std::map<std::string, sf::Texture>,
+		sf::RenderWindow& window,
 		int& frame,
 		std::map<std::string, BulletPattern>& patterns
 	);

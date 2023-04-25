@@ -32,11 +32,11 @@ void Enemy::init(int type,
 }
 
 
-// note: do NOT call without setting texture
-void Enemy::updateSprite(sf::RenderWindow& window,
+// note: do not call without setting texture
+void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
+    sf::RenderWindow& window,
     int frame,
     std::vector<Bullet>& bullets,
-    std::map<std::string, BulletPattern>& patterns,
     int stageFrame
 )
 {
@@ -59,12 +59,10 @@ void Enemy::updateSprite(sf::RenderWindow& window,
         }
     }
 
-    for (int i = 0; i < activePatterns.size(); i++)
+    for (unsigned int i = 0; i < patterns.size(); i++)
     {
-        if (patterns.count(activePatterns[i]) > 0)
-        {
-            patterns[activePatterns[i]].update(bullets, stageFrame, getPosition(), patternStartTimes[i]);
-        }
+        patterns[i].update(textureMap, bullets, stageFrame,
+            getPosition(), patternStartTimes[i]);
     }
 
     if (stageFrame == -1)
@@ -92,7 +90,9 @@ void Enemy::updateSprite(sf::RenderWindow& window,
             sprite.setPosition(playableToPather(path[path.size() - 1], window));
     }
 
-    if (stageFrame < startFrame || stageFrame > startFrame + path.size()) return setRender(false);
+    if (stageFrame < startFrame || stageFrame > startFrame + path.size())
+        return setRender(false);
+
     setRender(true);
     window.draw(sprite);
 }
@@ -115,7 +115,7 @@ void Enemy::setType(int type)
         spriteWidth = 32;
         spriteHeight = 32;
 
-        sprite.setScale(1.3, 1.3);
+        sprite.setScale((float)1.3, (float)1.3);
     }
 }
 
@@ -157,9 +157,9 @@ void Enemy::pushToPath(sf::Vector2f point)
 }
 
 
-void Enemy::pushToPatterns(std::string pattern, int startTime)
+void Enemy::pushToPatterns(BulletPattern pattern, int startTime)
 {
-    activePatterns.push_back(pattern);
+    patterns.push_back(pattern);
     patternStartTimes.push_back(startTime);
 }
 
@@ -168,13 +168,13 @@ void Enemy::eraseFromPatterns(std::string name)
 {
     int foundIndex = -1;
 
-    for (unsigned int i = 0; i < activePatterns.size(); i++)
-        if (activePatterns[i] == name)
+    for (unsigned int i = 0; i < patterns.size(); i++)
+        if (patterns[i].getName() == name)
             foundIndex = i;
 
     if (foundIndex >= 0)
     {
-        activePatterns.erase(activePatterns.begin() + foundIndex);
+        patterns.erase(patterns.begin() + foundIndex);
         patternStartTimes.erase(patternStartTimes.begin() + foundIndex);
     }
 }
@@ -188,7 +188,10 @@ Path Enemy::getPath()
 
 std::vector<std::string> Enemy::getPatterns()
 {
-    return activePatterns;
+    std::vector<std::string> returns;
+    for (BulletPattern& pattern : patterns)
+        returns.push_back(pattern.getName());
+    return returns;
 }
 
 
