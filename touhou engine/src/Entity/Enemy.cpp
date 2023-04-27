@@ -36,7 +36,7 @@ void Enemy::init(int type,
 void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
     sf::RenderWindow& window,
     int frame,
-    std::vector<Bullet>& bullets,
+    std::vector<std::vector<std::vector<Bullet>>>& bullets,
     int stageFrame
 )
 {
@@ -50,12 +50,18 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
         sprite.setTextureRect(sf::IntRect(spriteLeft, spriteTop, 32, 32));
     }
 
-    for (Bullet& bullet : bullets)
+    for (int i = 0; i < bullets.size(); i++)
     {
-        if (bullet.isPlayerOwned() && getHitbox().intersects(bullet.getHitbox()))
+        for (int j = 0; j < bullets[i].size(); j++)
         {
-            setRender(false);
-            bullet.setRender(false);
+            for (Bullet& bullet : bullets[i][j])
+            {
+                if (bullet.isPlayerOwned() && getHitbox().intersects(bullet.getHitbox()))
+                {
+                    setRender(false);
+                    bullet.setRender(false);
+                }
+            }
         }
     }
 

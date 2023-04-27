@@ -37,17 +37,13 @@ private:
 	Timeline timeline;
 	BulletPatternMenu bulletPatternMenu;
 	sf::RectangleShape playableArea;
-	sf::Vector2f patherToPlayable(sf::Vector2f point,
-		sf::RectangleShape& playableArea, sf::RenderWindow& window);
-	sf::Vector2f playableToPather(sf::Vector2f point,
-		sf::RectangleShape& playableArea, sf::RenderWindow& window);
 	sf::Vector2f mousePos;
 	int selectedEnemyIndex;
 	std::vector<Enemy> patherEnemies;
-	std::vector<Bullet> patherBullets;
+	std::vector<std::vector<std::vector<Bullet>>> patherBullets;
 	bool selecting, canDuplicate, enterStageName;
 
-	void draw(std::map<std::string, sf::Texture>,
+	void draw(std::map<std::string, sf::Texture>&,
 		sf::RenderWindow& window,
 		int& frame,
 		std::map<std::string, BulletPattern>& patterns
@@ -55,5 +51,9 @@ private:
 	void prompt(sf::RenderWindow& window, std::string input);
 	bool selectTool(sf::RenderWindow& window, int& frame);
 	bool drawTool(sf::RenderWindow& window, int& frame);
+	sf::Vector2f patherToPlayable(sf::Vector2f point,
+		sf::RectangleShape& playableArea, sf::RenderWindow& window);
+	sf::Vector2f playableToPather(sf::Vector2f point,
+		sf::RectangleShape& playableArea, sf::RenderWindow& window);
 };
 

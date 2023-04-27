@@ -22,7 +22,7 @@ public:
 		std::string nameIn
 	);
 	void update(std::map<std::string, sf::Texture>& textureMap,
-		std::vector<Bullet> bullets,
+		std::vector<std::vector<std::vector<Bullet>>>& bullets,
 		int& stageFrame,
 		sf::Vector2f origin,
 		int fireFrame
@@ -35,7 +35,9 @@ private:
 	    direction, directionChange,
 	    spawnDirection, spawnDirectionChange;
 	double velocity, velocityChange;
+	int bulletsIndex;
 	std::string bulletType;
 	std::string name;
 	std::vector<int> reservedBullets;
+	bool changeWithEnemy;
 };

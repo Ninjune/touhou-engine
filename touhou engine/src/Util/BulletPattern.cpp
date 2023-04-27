@@ -28,39 +28,66 @@ BulletPattern::BulletPattern(sf::Vector2f originIn,
 	burstSize = burstSizeIn; // amount of bullets per burst
 	burstSizeChange = burstSizeChangeIn; // change in burstSize per burst
 	direction = directionIn; // direction in which bullet goes 0-360
-	directionChange = directionChangeIn; // change in direction in burst
+	directionChange = directionChangeIn; // change in direction per burst
 	spawnDirection = spawnDirectionIn; // place to spawn the bullets based on a radius. will spawn in a circle around the target 0-360
 	spawnDirectionChange = spawnDirectionChangeIn; // change between burst
 	velocity = velocityIn; // speed of bullet
 	velocityChange = velocityChangeIn; // velocity change per burst
 	bulletType = bulletTypeIn; // type, TBA
 	name = nameIn; // pattern name, set to file name
+
+	bulletsIndex = -1;
+	changeWithEnemy = false;
 }
 
 
 void BulletPattern::update(std::map<std::string, sf::Texture>& textureMap,
-	std::vector<Bullet> bullets,
+	std::vector<std::vector<std::vector<Bullet>>>& bullets, // first for each pattern, second for each burst, third for each bullet
 	int& stageFrame,
-	sf::Vector2f origin,
+	sf::Vector2f enemyPos,
 	int fireFrame
 )
 {
-	if (reservedBullets.empty())
+	if (bulletsIndex == -1)
 	{
-		for (unsigned int i = bullets.size() - 1; i < bullets.size() - 1 + burstSize * burstCount; i++)
+		bullets.push_back({}); // push an empty array
+		bulletsIndex = bullets.size() - 1;
+
+		for (unsigned int i = 0; i < burstCount; i++)
 		{
-			reservedBullets.push_back(i);
-			bullets.push_back(Bullet());
+			bullets[bulletsIndex].push_back({});
+			for (unsigned int j = 0; j < burstSize + (burstSizeChange * i); j++)
+			{
+				bullets[bulletsIndex][i].push_back(Bullet(textureMap,
+					origin,
+					direction + (directionChange * i),
+					spawnDirection + (spawnDirectionChange * i),
+					velocity + (velocityChange * i),
+					bulletType
+				));
+			}
 		}
 	}
 
-	if (stageFrame >= fireFrame)
+	if (changeWithEnemy || origin.x <= -1)
 	{
-		for (unsigned int i = 0; i < (stageFrame - fireFrame) / frequency; i++)
-		{
-			// burst
-			// HERE
-		}
+		origin = enemyPos;
+		changeWithEnemy = true;
+	}
+	// enemy origin will change every time simulateFrame is called when it should only be changed on burst for the specific burst
+
+	// burst
+	int burstNum = (stageFrame - fireFrame) / frequency + 1;
+	if (burstNum < 1)
+		return;
+
+	if (burstNum > burstCount)
+		burstNum = burstCount;
+
+	for (unsigned int i = 0; i < burstNum; i++)
+	{
+		for (unsigned int j = 0; j < bullets[bulletsIndex][i].size(); j++)
+			bullets[bulletsIndex][i][j].simulateFrames((stageFrame - fireFrame + 1) - frequency * i, origin);
 	}
 }
 

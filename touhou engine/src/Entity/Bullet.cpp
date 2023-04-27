@@ -1,12 +1,6 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet()
-{
-
-}
-
-
 Bullet::Bullet(std::map<std::string, sf::Texture>& textureMap,
     sf::Vector2f originIn,
     int directionIn,
@@ -57,7 +51,8 @@ void Bullet::setup(std::map<std::string, sf::Texture>& textureMap,
         sprite.setRotation(directionIn);
     }
 
-    bulletSpeed = velocityIn;
+    direction = directionIn;
+    velocity = velocityIn;
     sprite.setPosition(originIn);
     aliveFrames = 0;
 }
@@ -68,7 +63,7 @@ void Bullet::updateSprite(sf::RenderWindow& window, int frame)
     if (playerOwned) // player
     {
         // 239 -> 191 over 11(?) frames
-        sprite.move(0, -bulletSpeed);
+        sprite.move(0, -velocity);
 
         if (aliveFrames < 11)
         {
@@ -77,26 +72,36 @@ void Bullet::updateSprite(sf::RenderWindow& window, int frame)
         }
 
         window.draw(sprite);
-
+        aliveFrames++;
     }
     else
-    {
+        window.draw(sprite);
+}
 
-    }
 
-    aliveFrames++;
+void Bullet::simulateFrames(int simulatedFrames, sf::Vector2f origin)
+{
+    if (playerOwned)
+        return;
+    // move bullet simulatedFrames*movePerFrame
+    // split velocity between x and y based on direction 0 = up, 90 = right, 180 = down, 270 = left
+    // x = right, -x = left, -y = up, y = down
+    // HERE
+    sprite.setPosition(origin);
+    //for(int i = 0; i < simulatedFrames; i++)
+        //sprite.move();
 }
 
 
 float Bullet::getBulletSpeed()
 {
-    return bulletSpeed;
+    return velocity;
 }
 
 
 void Bullet::setBulletSpeed(float in)
 {
-    bulletSpeed = in;
+    velocity = in;
 }
 
 

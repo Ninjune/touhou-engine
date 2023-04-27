@@ -51,8 +51,9 @@ int main()
     Player player(window, textureMap);
     Keybind eKey(sf::Keyboard::E), pKey(sf::Keyboard::P), RBracketKey(sf::Keyboard::RBracket);
     Pather pather(window, font, textureMap, SCREENWIDTH, SCREENHEIGHT, patterns);
-    std::vector<Enemy> enemies, enemiesTemp;
-    std::vector<Bullet> bullets, bulletsTemp;
+    std::vector<Enemy> enemies;
+    std::vector<Bullet> playerBullets;
+    std::vector<std::vector<std::vector<Bullet>>> bullets;
 
     while (window.isOpen())
     {
@@ -84,7 +85,7 @@ int main()
             if (pKey.consumeClick(frame, 15))
             {
                 patherEnabled = !patherEnabled;
-                bullets.clear();
+                playerBullets.clear();
             }
 
             if (RBracketKey.consumeClick(frame, 15))
@@ -93,10 +94,10 @@ int main()
             window.clear();
             for (unsigned int i = 0; i < bullets.size(); i++)
             {
-                if (!bullets[i].getRender())
-                    bullets.erase(bullets.begin() + i);
+                if (!playerBullets[i].getRender())
+                    playerBullets.erase(playerBullets.begin() + i);
                 else
-                    bullets[i].updateSprite(window, frame);
+                    playerBullets[i].updateSprite(window, frame);
                 
             }
 
@@ -119,7 +120,7 @@ int main()
             }
 
             text.setString(textString);
-            if(!patherEnabled) player.updateSprite(window, frame, bullets, textureMap);
+            if(!patherEnabled) player.updateSprite(window, frame, playerBullets, textureMap);
             window.draw(text);
             window.display();
             frame++;

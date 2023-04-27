@@ -146,7 +146,7 @@ void Pather::update(sf::RenderWindow& window,
     }
     else
     {
-        mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
+        mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x,
             sf::Mouse::getPosition(window).y
         );
         bool continuing = false;
@@ -180,7 +180,7 @@ void Pather::update(sf::RenderWindow& window,
 
         if(!continuing)
             return draw(textureMap, window, frame, patterns);
-
+        
         Path selectedEnemyPath = patherEnemies[selectedEnemyIndex].getPath();
 
         for (sf::Vector2f& point : selectedEnemyPath)
@@ -202,7 +202,7 @@ void Pather::update(sf::RenderWindow& window,
 
         // we only want to update this when we have selected an enemy
         bulletPatternMenu.update(window, frame, patherEnemies, selectedEnemyIndex, textureMap, timeline.getCurrentFrame());
-
+        
         draw(textureMap, window, frame, patterns);
     }
 }
@@ -244,7 +244,7 @@ Path Pather::getSelectedEnemyPath()
 }
 
 
-void Pather::draw(std::map<std::string, sf::Texture> textureMap,
+void Pather::draw(std::map<std::string, sf::Texture>& textureMap,
     sf::RenderWindow& window,
     int& frame,
     std::map<std::string, BulletPattern>& patterns

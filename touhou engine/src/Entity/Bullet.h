@@ -15,6 +15,7 @@ public:
 		bool playerOwned = false
 	);
 	void updateSprite(sf::RenderWindow& window, int frame);
+	void simulateFrames(int simulatedFrames, sf::Vector2f origin);
 	float getBulletSpeed();
 	void setBulletSpeed(float);
 	int getBulletType();
@@ -29,7 +30,7 @@ private:
 		std::string bulletTypeIn,
 		bool playerOwned
 	);
-	int aliveFrames, bulletType; // 0 = player, 
-	float xOffset, bulletSpeed; // negative = go up, pos = go down
+	int aliveFrames, bulletType, direction;
+	float xOffset, velocity; // negative = go up, pos = go down
 	bool playerOwned;
 };

@@ -14,7 +14,7 @@ public:
 	void updateSprite(std::map<std::string, sf::Texture>& textureMap,
 		sf::RenderWindow& window,
 		int frame,
-		std::vector<Bullet>& bullets,
+		std::vector<std::vector<std::vector<Bullet>>>& bullets,
 		int currentFrame = -1
 	);
 	bool isPathFine();
