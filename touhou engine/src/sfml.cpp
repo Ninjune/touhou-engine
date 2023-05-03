@@ -65,66 +65,65 @@ int main()
             pather.poll(event);
         }
         
-        if (window.hasFocus())
+        if (!window.hasFocus())
+            continue;
+        if (frame % 5 == 0) // 1/12 of a second
         {
-            if (frame % 5 == 0) // 1/12 of a second
-            {
-                currentTime = std::chrono::high_resolution_clock::now();
-                fps = 1000000000.0 / (std::chrono::duration_cast
-                        <std::chrono::nanoseconds>(currentTime - lastTime).count());
-            }
-            textString = ("Fps: " + std::to_string(fps) + 
-                (patherEnabled ? "\nPath length: " + 
-                std::to_string(pather.getSelectedEnemyPath().size()) +
-                "\nPath speed: " + 
-                std::to_string(pather.getSelectedEnemyPath().getPathSpeed()) +
-                "s\nReset path: 'R'\nExport path: 'E'\nClear enemies: ]" : "")
-            );
-            lastTime = std::chrono::high_resolution_clock::now();
-
-            if (pKey.consumeClick(frame, 15))
-            {
-                patherEnabled = !patherEnabled;
-                playerBullets.clear();
-            }
-
-            if (RBracketKey.consumeClick(frame, 15))
-                enemies.clear();
-
-            window.clear();
-            for (unsigned int i = 0; i < bullets.size(); i++)
-            {
-                if (!playerBullets[i].getRender())
-                    playerBullets.erase(playerBullets.begin() + i);
-                else
-                    playerBullets[i].updateSprite(window, frame);
-                
-            }
-
-            for (unsigned int i = 0; i < enemies.size(); i++)
-            {
-                if (!enemies[i].getRender())
-                    enemies.erase(enemies.begin() + i);
-                else
-                    enemies[i].updateSprite(textureMap, window, frame, bullets);
-            }
-
-            if (patherEnabled) // make pather draw everything in window
-                pather.update(window, frame, textureMap, patterns);
-
-            for (unsigned int i = 0; i < enemies.size(); i++)
-            {
-                if (!enemies[i].isPathFine())
-                    textString += "\n#" + std::to_string(i) + 
-                    " enemy path is not smoothed.";
-            }
-
-            text.setString(textString);
-            if(!patherEnabled) player.updateSprite(window, frame, playerBullets, textureMap);
-            window.draw(text);
-            window.display();
-            frame++;
+            currentTime = std::chrono::high_resolution_clock::now();
+            fps = 1000000000.0 / (std::chrono::duration_cast
+                    <std::chrono::nanoseconds>(currentTime - lastTime).count());
         }
+        textString = ("Fps: " + std::to_string(fps) + 
+            (patherEnabled ? "\nPath length: " + 
+            std::to_string(pather.getSelectedEnemyPath().size()) +
+            "\nPath speed: " + 
+            std::to_string(pather.getSelectedEnemyPath().getPathSpeed()) +
+            "s\nReset path: 'R'\nExport path: 'E'\nClear enemies: ]" : "")
+        );
+        lastTime = std::chrono::high_resolution_clock::now();
+
+        if (pKey.consumeClick(frame, 15))
+        {
+            patherEnabled = !patherEnabled;
+            playerBullets.clear();
+        }
+
+        if (RBracketKey.consumeClick(frame, 15))
+            enemies.clear();
+
+        window.clear();
+        for (unsigned int i = 0; i < bullets.size(); i++)
+        {
+            if (!playerBullets[i].getRender())
+                playerBullets.erase(playerBullets.begin() + i);
+            else
+                playerBullets[i].updateSprite(window, frame);
+                
+        }
+
+        for (unsigned int i = 0; i < enemies.size(); i++)
+        {
+            if (!enemies[i].getRender())
+                enemies.erase(enemies.begin() + i);
+            else
+                enemies[i].updateSprite(textureMap, window, frame, bullets);
+        }
+
+        if (patherEnabled) // make pather draw everything in window
+            pather.update(window, frame, textureMap, patterns);
+
+        for (unsigned int i = 0; i < enemies.size(); i++)
+        {
+            if (!enemies[i].isPathFine())
+                textString += "\n#" + std::to_string(i) + 
+                " enemy path is not smoothed.";
+        }
+
+        text.setString(textString);
+        if(!patherEnabled) player.updateSprite(window, frame, playerBullets, textureMap);
+        window.draw(text);
+        window.display();
+        frame++;
     }
 
     return 0;

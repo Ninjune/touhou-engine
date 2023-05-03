@@ -41,7 +41,8 @@ BulletPattern::BulletPattern(sf::Vector2f originIn,
 }
 
 
-void BulletPattern::update(std::map<std::string, sf::Texture>& textureMap,
+void BulletPattern::update(sf::RenderWindow& window,
+	std::map<std::string, sf::Texture>& textureMap,
 	std::vector<std::vector<std::vector<Bullet>>>& bullets, // first for each pattern, second for each burst, third for each bullet
 	int& stageFrame,
 	sf::Vector2f enemyPos,
@@ -68,7 +69,6 @@ void BulletPattern::update(std::map<std::string, sf::Texture>& textureMap,
 			}
 		}
 	}
-
 	if (changeWithEnemy || origin.x <= -1)
 	{
 		origin = enemyPos;
@@ -83,11 +83,12 @@ void BulletPattern::update(std::map<std::string, sf::Texture>& textureMap,
 
 	if (burstNum > burstCount)
 		burstNum = burstCount;
-
+	// HERE
+	// we need to fix fireFrame being lower than stage frame.
 	for (unsigned int i = 0; i < burstNum; i++)
 	{
 		for (unsigned int j = 0; j < bullets[bulletsIndex][i].size(); j++)
-			bullets[bulletsIndex][i][j].simulateFrames((stageFrame - fireFrame + 1) - frequency * i, origin);
+			bullets[bulletsIndex][i][j].simulateFrames(window, (stageFrame - fireFrame + 1) - frequency * i, origin);
 	}
 }
 

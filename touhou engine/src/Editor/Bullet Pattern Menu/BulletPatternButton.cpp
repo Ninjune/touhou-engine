@@ -51,24 +51,27 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 		sf::Mouse::getPosition(window).y
 	);
 	std::vector<std::string> patternCopy = enemies[selectedEnemyIndex].getPatterns();
+	std::vector<int> startCopy = enemies[selectedEnemyIndex].getStartTimes();
 	added = false;
 
-	for (unsigned int i = 0; i < patternCopy.size(); i++)
-		if (patternCopy[i] == getName())
+	for (unsigned int i = 0; i < startCopy.size(); i++)
+		if (startCopy[i] == currentFrame &&
+			patternCopy[i] == getName()
+		)
 			added = true;
-
+	
 	if (innerRectangle.getGlobalBounds().contains(mousePos) &&
 		m1.consumeClick(frame, 20)
 	)
 	{
-		if (!added)
+		if (!added && enemies[selectedEnemyIndex].getRender())
 		{
 			enemies[selectedEnemyIndex].pushToPatterns(bulletPattern, currentFrame);
 			added = true;
 		}
 		else
 		{
-			enemies[selectedEnemyIndex].eraseFromPatterns(bulletPattern.getName());
+			enemies[selectedEnemyIndex].eraseFromPatterns(currentFrame);
 			added = false;
 		}
 	}

@@ -31,7 +31,7 @@ public:
 	void clearPath();
 	void pushToPath(sf::Vector2f point);
 	void pushToPatterns(BulletPattern pattern, int startTime);
-	void eraseFromPatterns(std::string name);
+	void eraseFromPatterns(int currentFrame);
 private:
 	void init(int type, 
 		sf::Texture& texture

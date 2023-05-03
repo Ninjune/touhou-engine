@@ -146,3 +146,5 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 		window.draw(downIcon);
 	}
 }
+
+// if were on the frame of an added pattern then we show remove and can remove otherwise we show add. 

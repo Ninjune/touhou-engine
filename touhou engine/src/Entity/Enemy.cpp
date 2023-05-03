@@ -67,7 +67,7 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
 
     for (unsigned int i = 0; i < patterns.size(); i++)
     {
-        patterns[i].update(textureMap, bullets, stageFrame,
+        patterns[i].update(window, textureMap, bullets, stageFrame,
             getPosition(), patternStartTimes[i]);
     }
 
@@ -170,12 +170,12 @@ void Enemy::pushToPatterns(BulletPattern pattern, int startTime)
 }
 
 
-void Enemy::eraseFromPatterns(std::string name)
+void Enemy::eraseFromPatterns(int currentFrame)
 {
     int foundIndex = -1;
 
     for (unsigned int i = 0; i < patterns.size(); i++)
-        if (patterns[i].getName() == name)
+        if (patternStartTimes[i] == currentFrame)
             foundIndex = i;
 
     if (foundIndex >= 0)

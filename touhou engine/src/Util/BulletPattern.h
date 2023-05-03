@@ -21,7 +21,8 @@ public:
 		std::string bulletTypeIn,
 		std::string nameIn
 	);
-	void update(std::map<std::string, sf::Texture>& textureMap,
+	void update(sf::RenderWindow& window,
+		std::map<std::string, sf::Texture>& textureMap,
 		std::vector<std::vector<std::vector<Bullet>>>& bullets,
 		int& stageFrame,
 		sf::Vector2f origin,
