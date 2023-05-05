@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Util\MenuButton.cpp" />
     <ClCompile Include="src\Editor\Bullet Pattern Menu\BulletPatternButton.cpp" />
     <ClCompile Include="src\Editor\Bullet Pattern Menu\BulletPatternMenu.cpp" />
     <ClCompile Include="src\Entity\Bullet.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="src\Editor\Tool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Util\MenuButton.h" />
     <ClInclude Include="src\Editor\Bullet Pattern Menu\BulletPatternButton.h" />
     <ClInclude Include="src\Editor\Bullet Pattern Menu\BulletPatternMenu.h" />
     <ClInclude Include="src\Entity\Bullet.h" />

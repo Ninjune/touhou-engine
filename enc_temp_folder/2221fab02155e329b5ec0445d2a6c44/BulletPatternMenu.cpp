@@ -139,7 +139,7 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 		}
 		else if (addPatternButton.getGlobalBounds().contains(mousePos))
 		{
-			// HERE add pattern editor
+			// HERE
 			addPatternButton.setState(true);
 		}
 	}

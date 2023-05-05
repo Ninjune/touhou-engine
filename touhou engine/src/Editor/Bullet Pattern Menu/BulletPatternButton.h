@@ -1,9 +1,10 @@
 #include "../../Util/BulletPattern.h"
 #include "../../Entity/Enemy.h"
 #include "../../Util/Keybind.h"
+#include "../../Util/MenuButton.h"
 #pragma once
 
-class BulletPatternButton
+class BulletPatternButton : MenuButton
 {
 public:
 	BulletPatternButton(sf::Vector2f menuPos,
@@ -27,9 +28,6 @@ private:
 	sf::Text patternName;
 	Keybind m1;
 	sf::RectangleShape mainRectangle;
-	sf::RectangleShape innerRectangle;
-	sf::Sprite buttonSprite;
 	BulletPattern bulletPattern;
-	bool added;
 };
 

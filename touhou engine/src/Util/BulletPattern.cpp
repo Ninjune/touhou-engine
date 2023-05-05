@@ -78,13 +78,12 @@ void BulletPattern::update(sf::RenderWindow& window,
 
 	// burst
 	int burstNum = (stageFrame - fireFrame) / frequency + 1;
-	if (burstNum < 1)
+	if (burstNum < 1 || stageFrame < fireFrame)
 		return;
 
 	if (burstNum > burstCount)
 		burstNum = burstCount;
-	// HERE
-	// we need to fix fireFrame being lower than stage frame.
+
 	for (unsigned int i = 0; i < burstNum; i++)
 	{
 		for (unsigned int j = 0; j < bullets[bulletsIndex][i].size(); j++)
@@ -103,7 +102,7 @@ originX originY frequency burstCount burstSize burstSizeChange direction (just c
 directionChange spawnDirection spawnDirectionChange velocity velocityChange
 bulletType
 
-The file name will be the name. Exclude .txt
+The file name will be the name, excluding .txt
 
 For origin: if either is a negative number then require Enemy to give it's origin as it will be relative to enemy.
 For direction: if negative then give a direction towards player

@@ -21,23 +21,19 @@ Timeline::Timeline(const int windowWidth, const int windowHeight,
 	stageLength = 1;
 	frameText.setFont(font);
 
-	playRectangle.setFillColor(sf::Color::Transparent);
-	playRectangle.setOutlineColor(sf::Color::White);
-	playRectangle.setOutlineThickness(2);
-	playRectangle.setSize(sf::Vector2f(outerRectangle.getSize().y, outerRectangle.getSize().y));
-	playRectangle.setOrigin(playRectangle.getSize().x / 2, playRectangle.getSize().y / 2);
-	playRectangle.setPosition(windowWidth / 11, outerRectangle.getPosition().y);
+	playButton.setOutlineThickness(2);
+	playButton.setSize(sf::Vector2f(outerRectangle.getSize().y, outerRectangle.getSize().y));
+	playButton.setOrigin(playButton.getSize().x / 2, playButton.getSize().y / 2);
+	playButton.setPosition(windowWidth / 11, outerRectangle.getPosition().y);
 
-	playTriangle.setRadius(playRectangle.getSize().x/3);
+	playTriangle.setRadius(playButton.getSize().x/3);
 	playTriangle.setOrigin(playTriangle.getRadius(), playTriangle.getRadius());
 	playTriangle.setRotation(90);
 	playTriangle.setPointCount(3);
 	playTriangle.setFillColor(sf::Color::Red);
 	playTriangle.setOutlineColor(sf::Color::White);
 	playTriangle.setOutlineThickness(0.5);
-	playTriangle.setPosition(playRectangle.getPosition());
-
-	play = false;
+	playTriangle.setPosition(playButton.getPosition());
 }
 
 
@@ -77,20 +73,20 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 		}
 	}
 
-	if ((m1.consumeClick(frame, 20) && playRectangle.getGlobalBounds().contains(mousePos)) || spacebar.consumeClick(frame, 20))
+	if ((m1.consumeClick(frame, 20) && playButton.getGlobalBounds().contains(mousePos)) || spacebar.consumeClick(frame, 20))
 	{
-		play = !play;
+		playButton.setState(!playButton.getState());
 		if (currentFrame >= stageLength - 1)
 			currentFrame = 0;
 	}
 
-	if (play)
+	if (playButton.getState())
 	{
 		playTriangle.setFillColor(sf::Color::Green);
 		if (currentFrame < stageLength - 1)
 			currentFrame++;
 		else
-			play = false;
+			playButton.setState(false);
 	}
 	else
 		playTriangle.setFillColor(sf::Color::Red);
@@ -99,7 +95,7 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 
 	if (left.consumeClick(frame, 5))
 	{
-		play = false;
+		playButton.setState(false);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 			currentFrame -= 60;
 		else
@@ -108,7 +104,7 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 
 	if (right.consumeClick(frame, 5))
 	{
-		play = false;
+		playButton.setState(false);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 			currentFrame += 60;
 		else if (currentFrame + 1 < stageLength)
@@ -125,7 +121,7 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 	frameText.setPosition(innerRectangle.getPosition().x,outerRectangle.getPosition().y);
 	window.draw(outerRectangle);
 	window.draw(innerRectangle);
-	window.draw(playRectangle);
+	window.draw(playButton);
 	window.draw(playTriangle);
 	window.draw(frameText);
 }

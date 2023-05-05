@@ -37,11 +37,11 @@ Pather::Pather(sf::RenderWindow& window,
     selectedEnemyIndex = -1;
     inputStr = "";
 
-    tools.push_back(Tool(textureMap["selectionIcon"], window.getSize().x / 25,
+    tools.push_back(Tool(textureMap["selectionIcon"], window.getSize().x / 45,
         window.getSize().y / 4, 64, 512, true)); // select enemy
-    tools.push_back(Tool(textureMap["pencilIcon"], window.getSize().x / 28 * 3,
+    tools.push_back(Tool(textureMap["pencilIcon"], window.getSize().x / 45 * 4,
         window.getSize().y / 4, 64, 512)); // draw path
-    tools.push_back(Tool(textureMap["duplicateIcon"], window.getSize().x / 25,
+    tools.push_back(Tool(textureMap["duplicateIcon"], window.getSize().x / 45,
         window.getSize().y / 4 + 96, 64, 512)); // will duplicate then put copy under mouse to be moved wherever
 
     bulletPatternMenu.setPosition(14, playableArea.getPosition().y-7);

@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "../Util/Keybind.h"
+#include "../Util/MenuButton.h"
 
 #pragma once
 class Timeline
@@ -13,9 +14,9 @@ public:
 	int getCurrentFrame();
 private:
 	Keybind left, right, m1, spacebar;
-	sf::RectangleShape outerRectangle, innerRectangle, playRectangle;
+	sf::RectangleShape outerRectangle, innerRectangle;
+	MenuButton playButton;
 	sf::CircleShape playTriangle;
-	bool play;
 	int currentFrame, stageLength;
 	std::vector<sf::FloatRect> bounds;
 	sf::Text frameText;

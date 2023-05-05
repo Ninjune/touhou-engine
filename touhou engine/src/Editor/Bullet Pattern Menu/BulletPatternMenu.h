@@ -21,6 +21,7 @@ public:
 private:
 	Keybind m1;
 	sf::RectangleShape menuRect, upButton, downButton;
+	MenuButton addPatternButton;
 	sf::Sprite upIcon, downIcon;
 	std::vector<BulletPatternButton> buttons;
 	std::vector<unsigned int> buttonOrder;

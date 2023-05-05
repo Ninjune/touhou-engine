@@ -1,9 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include "../Util/Keybind.h"
+#include "../Util/MenuButton.h"
 #pragma once
 
 
-class Tool // options texture, x, y, size
+class Tool : MenuButton
 {
 public:
 	Tool(sf::Texture& texture, float x, float y, int size, int spriteSize, bool enabled = false);
@@ -12,8 +13,5 @@ public:
 	void disable();
 private:
 	Keybind m1;
-	sf::Sprite sprite;
-	sf::RectangleShape box;
-	bool enabled;
 };
 
