@@ -13,6 +13,7 @@ make sure to make instructions/readme explaining the premise of the game, contro
 #include "Entity/Enemy.h"
 #include "Util/Keybind.h"
 #include "Editor/Pather.h"
+#include "Menu/StageLoader.h"
 
 const int SCREENWIDTH = 1422, SCREENHEIGHT = 800;
 void defineTextures(std::map<std::string, sf::Texture>& textureMap);
@@ -33,10 +34,11 @@ int main()
 {
     std::map<std::string, sf::Texture> textureMap;
     std::map<std::string, BulletPattern> patterns;
+    std::string state = "loader";
     defineTextures(textureMap);
     definePatterns(patterns);
     int frame = 0, fps = 0, stageFrame = 0; // update stage frame when stage is loaded
-    bool titleScreen = true, patherEnabled = false;
+    bool titleScreen = true;
     sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "real touhou game");
     window.setFramerateLimit(60);
     std::chrono::steady_clock::time_point lastTime = std::chrono::high_resolution_clock::now(), currentTime;
@@ -54,6 +56,7 @@ int main()
     std::vector<Enemy> enemies;
     std::vector<Bullet> playerBullets;
     std::vector<std::vector<std::vector<Bullet>>> bullets;
+    StageLoader stageLoader;
 
     while (window.isOpen())
     {
@@ -67,60 +70,59 @@ int main()
         
         if (!window.hasFocus())
             continue;
+
         if (frame % 5 == 0) // 1/12 of a second
         {
             currentTime = std::chrono::high_resolution_clock::now();
             fps = 1000000000.0 / (std::chrono::duration_cast
-                    <std::chrono::nanoseconds>(currentTime - lastTime).count());
+                <std::chrono::nanoseconds>(currentTime - lastTime).count());
         }
-        textString = ("Fps: " + std::to_string(fps) + 
-            (patherEnabled ? "\nPath length: " + 
-            std::to_string(pather.getSelectedEnemyPath().size()) +
-            "\nPath speed: " + 
-            std::to_string(pather.getSelectedEnemyPath().getPathSpeed()) +
-            "s\nReset path: 'R'\nExport path: 'E'\nClear enemies: ]" : "")
-        );
+        textString = ("Fps: " + std::to_string(fps) +
+            (state == "edit" ? "\nPath length: " +
+                std::to_string(pather.getSelectedEnemyPath().size()) +
+                "\nPath speed: " +
+                std::to_string(pather.getSelectedEnemyPath().getPathSpeed()) +
+                "\nExport path : 'E'" : "")
+            );
         lastTime = std::chrono::high_resolution_clock::now();
 
         if (pKey.consumeClick(frame, 15))
         {
-            patherEnabled = !patherEnabled;
+            state = "edit";
             playerBullets.clear();
         }
 
-        if (RBracketKey.consumeClick(frame, 15))
-            enemies.clear();
-
         window.clear();
-        for (unsigned int i = 0; i < bullets.size(); i++)
+        if (state == "loader")
         {
-            if (!playerBullets[i].getRender())
-                playerBullets.erase(playerBullets.begin() + i);
-            else
-                playerBullets[i].updateSprite(window, frame);
-                
+            stageLoader.update(window, frame, font);
         }
-
-        for (unsigned int i = 0; i < enemies.size(); i++)
+        else if (state == "play")
         {
-            if (!enemies[i].getRender())
-                enemies.erase(enemies.begin() + i);
-            else
-                enemies[i].updateSprite(textureMap, window, frame, bullets);
-        }
+            for (unsigned int i = 0; i < playerBullets.size(); i++)
+            {
+                if (!playerBullets[i].getRender())
+                    playerBullets.erase(playerBullets.begin() + i);
+                else
+                    playerBullets[i].updateSprite(window, frame);
+            }
 
-        if (patherEnabled) // make pather draw everything in window
+            for (unsigned int i = 0; i < enemies.size(); i++)
+            {
+                if (!enemies[i].getRender())
+                    enemies.erase(enemies.begin() + i);
+                else
+                    enemies[i].updateSprite(textureMap, window, frame, bullets);
+            }
+
+            player.updateSprite(window, frame, playerBullets, textureMap);
+        }
+        else if (state == "edit")
+        {
             pather.update(window, frame, textureMap, patterns);
-
-        for (unsigned int i = 0; i < enemies.size(); i++)
-        {
-            if (!enemies[i].isPathFine())
-                textString += "\n#" + std::to_string(i) + 
-                " enemy path is not smoothed.";
         }
 
         text.setString(textString);
-        if(!patherEnabled) player.updateSprite(window, frame, playerBullets, textureMap);
         window.draw(text);
         window.display();
         frame++;
@@ -185,7 +187,7 @@ void definePatterns(std::map<std::string, BulletPattern>& patterns)
         else
             throw "file not found?";
 
-        patterns[patternName] = BulletPattern(origin, frequency, burstCount, 
+        patterns[patternName] = BulletPattern(origin, frequency, burstCount,
             burstSize, burstSizeChange, direction, directionChange, spawnDirection,
             spawnDirectionChange, velocity, velocityChange, bulletType, patternName
         );

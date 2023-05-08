@@ -1,7 +1,4 @@
-#include <string>
-#include <filesystem>
 #include "BulletPatternMenu.h"
-#include "../../Entity/Enemy.h"
 
 
 BulletPatternMenu::BulletPatternMenu()
@@ -139,7 +136,7 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 		}
 		else if (addPatternButton.getGlobalBounds().contains(mousePos))
 		{
-			// HERE add pattern editor
+			// add pattern editor
 			addPatternButton.setState(true);
 		}
 	}
@@ -160,5 +157,3 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 		window.draw(downIcon);
 	}
 }
-
-// if were on the frame of an added pattern then we show remove and can remove otherwise we show add. 

@@ -201,6 +201,21 @@ std::vector<std::string> Enemy::getPatterns()
 }
 
 
+void Enemy::setPatterns(std::map<std::string, BulletPattern>& patternMap,
+    std::vector<std::string> patternsToAdd,
+    std::vector<int> startTimes
+)
+{
+    for (int i = 0; i < patternsToAdd.size(); i++)
+    {
+        if (!patternMap.count(patternsToAdd[i]))
+            continue;
+        patterns.push_back(patternMap[patternsToAdd[i]]);
+        patternStartTimes.push_back(startTimes[i]);
+    }
+}
+
+
 std::vector<int> Enemy::getStartTimes()
 {
     return patternStartTimes;

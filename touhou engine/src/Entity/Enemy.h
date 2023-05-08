@@ -26,6 +26,10 @@ public:
 	void setStartFrame(int);
 	Path getPath();
 	std::vector<std::string> getPatterns();
+	void setPatterns(std::map<std::string, BulletPattern>& patternMap,
+		std::vector<std::string> patternsToAdd,
+		std::vector<int> startTimes
+	); // used for setting when playing game
 	std::vector<int> getStartTimes();
 	int getStartFrame();
 	void clearPath();

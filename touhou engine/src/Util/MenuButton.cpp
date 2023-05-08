@@ -14,6 +14,7 @@ void MenuButton::setState(bool in)
 }
 
 
+// set position & size prior to this.
 void MenuButton::setupSprite(sf::Texture& texture, int sizeX, int sizeY)
 {
 	sprite.setTexture(texture);
@@ -25,6 +26,16 @@ void MenuButton::setupSprite(sf::Texture& texture, int sizeX, int sizeY)
 bool MenuButton::getState()
 {
 	return state;
+}
+
+
+bool MenuButton::checkMouse()
+{
+	if (getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition().x,
+		sf::Mouse::getPosition().y))
+	)
+		return true;
+	return false;
 }
 
 

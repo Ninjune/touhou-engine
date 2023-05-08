@@ -12,6 +12,7 @@ public:
 	// setups the sprite, call after setting position of the button.
 	void setupSprite(sf::Texture& texture, int sizeX, int sizeY);
 	bool getState();
+	bool checkMouse();
 	void draw(sf::RenderWindow& window);
 protected:
 	sf::Sprite sprite;

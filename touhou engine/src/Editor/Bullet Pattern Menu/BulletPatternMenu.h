@@ -1,4 +1,6 @@
 #include "BulletPatternButton.h"
+#include "../../Entity/Enemy.h"
+
 #pragma once
 class BulletPatternMenu
 {

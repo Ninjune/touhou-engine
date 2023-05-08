@@ -148,6 +148,8 @@
     <ClCompile Include="src\sfml.cpp" />
     <ClCompile Include="src\Editor\Timeline.cpp" />
     <ClCompile Include="src\Editor\Tool.cpp" />
+    <ClCompile Include="src\Menu\StageLoader.cpp" />
+    <ClCompile Include="src\Menu\StageLoaderButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Util\MenuButton.h" />
@@ -163,6 +165,8 @@
     <ClInclude Include="src\Entity\Player.h" />
     <ClInclude Include="src\Editor\Timeline.h" />
     <ClInclude Include="src\Editor\Tool.h" />
+    <ClInclude Include="src\Menu\StageLoader.h" />
+    <ClInclude Include="src\Menu\StageLoaderButton.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
