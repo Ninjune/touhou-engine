@@ -87,7 +87,9 @@ void BulletPattern::update(sf::RenderWindow& window,
 	for (unsigned int i = 0; i < burstNum; i++)
 	{
 		for (unsigned int j = 0; j < bullets[bulletsIndex][i].size(); j++)
+		{
 			bullets[bulletsIndex][i][j].simulateFrames(window, (stageFrame - fireFrame + 1) - frequency * i, origin);
+		}
 	}
 }
 

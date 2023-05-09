@@ -15,7 +15,8 @@ public:
 		sf::Font& font,
 		std::string& state,
 		std::vector<Enemy>& enemies,
-		int& stageLength
+		int& stageLength,
+		std::map<std::string, BulletPattern>
 	);
 private:
 	sf::RectangleShape menuRect;

@@ -138,9 +138,8 @@ void Pather::update(sf::RenderWindow& window,
 
             enterStageName = false;
         }
-        inputText.setString("Enter Stage Name: " + inputStr);
 
-        prompt(window, "Enter stage name: " + inputStr);
+        prompt(window, "Enter stage name (no commas ',' or semicolons ';'): " + inputStr);
     }
     else
     {

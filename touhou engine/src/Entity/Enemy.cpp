@@ -37,7 +37,8 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
     sf::RenderWindow& window,
     int frame,
     std::vector<std::vector<std::vector<Bullet>>>& bullets,
-    int stageFrame
+    int stageFrame,
+    bool pather
 )
 {
     if (path.size() < 1) return;
@@ -48,21 +49,6 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
             spriteLeft = 0;
 
         sprite.setTextureRect(sf::IntRect(spriteLeft, spriteTop, 32, 32));
-    }
-
-    for (int i = 0; i < bullets.size(); i++)
-    {
-        for (int j = 0; j < bullets[i].size(); j++)
-        {
-            for (Bullet& bullet : bullets[i][j])
-            {
-                if (bullet.isPlayerOwned() && getHitbox().intersects(bullet.getHitbox()))
-                {
-                    setRender(false);
-                    bullet.setRender(false);
-                }
-            }
-        }
     }
 
     for (unsigned int i = 0; i < patterns.size(); i++)
@@ -90,17 +76,23 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
     }
     else
     {
+        sf::Vector2f pos;
         if (stageFrame >= startFrame && stageFrame < startFrame + path.size())
-            sprite.setPosition(playableToPather(path[stageFrame-startFrame], window));
+            pos = path[stageFrame - startFrame];
         else
-            sprite.setPosition(playableToPather(path[path.size() - 1], window));
+            pos = path[path.size() - 1];
+
+        if (pather)
+            pos = playableToPather(pos, window);
+
+        sprite.setPosition(pos);
     }
 
-    if (stageFrame < startFrame || stageFrame > startFrame + path.size())
-        return setRender(false);
+    //if (stageFrame > startFrame + path.size())
+    //   return setRender(false);
 
-    setRender(true);
-    window.draw(sprite);
+    if(getRender())
+        window.draw(sprite);
 }
 
 

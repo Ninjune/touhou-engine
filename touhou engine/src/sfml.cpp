@@ -101,28 +101,29 @@ int main()
                 font,
                 state,
                 enemies,
-                stageLength
+                stageLength,
+                patterns
             );
         }
         else if (state == "play")
         {
             for (unsigned int i = 0; i < playerBullets.size(); i++)
             {
-                if (!playerBullets[i].getRender())
-                    playerBullets.erase(playerBullets.begin() + i);
-                else
+                // if (!playerBullets[i].getRender())
+                //    playerBullets.erase(playerBullets.begin() + i);
+                //else
                     playerBullets[i].updateSprite(window, frame);
             }
 
             for (unsigned int i = 0; i < enemies.size(); i++)
             {
-                if (!enemies[i].getRender())
-                    enemies.erase(enemies.begin() + i);
-                else
-                    enemies[i].updateSprite(textureMap, window, frame, bullets);
+               // if (!enemies[i].getRender())
+               //     enemies.erase(enemies.begin() + i);
+               //else
+                    enemies[i].updateSprite(textureMap, window, frame, bullets, stageFrame, false);
             }
 
-            player.updateSprite(window, frame, playerBullets, textureMap);
+            player.updateSprite(window, frame, playerBullets, enemies, bullets, textureMap);
             stageFrame++;
         }
         else if (state == "edit")
@@ -144,6 +145,7 @@ int main()
 void defineTextures(std::map<std::string, sf::Texture>& textureMap)
 {
     map(textureMap, "player", "textures/player/pl00/player.png");
+    map(textureMap, "lifeStar", "textures/player/life.png");
     map(textureMap, "enemy", "textures/enemy/enemy.png");
     map(textureMap, "bullet1", "textures/bullet/bullet1.png");
     map(textureMap, "selectionIcon", "textures/icons/selection.png");

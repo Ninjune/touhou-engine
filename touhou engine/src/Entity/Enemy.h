@@ -15,7 +15,8 @@ public:
 		sf::RenderWindow& window,
 		int frame,
 		std::vector<std::vector<std::vector<Bullet>>>& bullets,
-		int currentFrame = -1
+		int currentFrame,
+		bool pather = true
 	);
 	bool isPathFine();
 	void setTexture(sf::Texture& texture);

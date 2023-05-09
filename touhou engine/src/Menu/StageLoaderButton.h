@@ -7,9 +7,11 @@ class StageLoaderButton
 {
 public:
 	StageLoaderButton(std::map<std::string, sf::Texture>& textureMap,
-		sf::Vector2u menuSize,
+		sf::Vector2f menuSize,
+		sf::Vector2f menuPos,
 		std::string stageIn,
-		sf::Font& font
+		sf::Font& font,
+		std::vector<StageLoaderButton> buttons
 	);
 	void update(sf::RenderWindow& window, int& frame);
 	std::string getState();

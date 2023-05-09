@@ -29,10 +29,10 @@ bool MenuButton::getState()
 }
 
 
-bool MenuButton::checkMouse()
+bool MenuButton::checkMouse(sf::RenderWindow& window)
 {
-	if (getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition().x,
-		sf::Mouse::getPosition().y))
+	if (getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window).x,
+		sf::Mouse::getPosition(window).y))
 	)
 		return true;
 	return false;

@@ -62,7 +62,7 @@ void Bullet::setup(std::map<std::string, sf::Texture>& textureMap,
 
 void Bullet::updateSprite(sf::RenderWindow& window, int frame)
 {
-    if (playerOwned) // player
+    if (playerOwned && getRender()) // player
     {
         // 239 -> 191 over 11(?) frames
         sprite.move(0, -velocity);
@@ -76,7 +76,7 @@ void Bullet::updateSprite(sf::RenderWindow& window, int frame)
         window.draw(sprite);
         aliveFrames++;
     }
-    else
+    else if (getRender())
         window.draw(sprite);
 }
 

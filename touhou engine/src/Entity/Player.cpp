@@ -19,6 +19,7 @@ Player::Player(sf::RenderWindow& window,
     shootSpeed = 5;
     speed = 6;
     shootCooldown = 0;
+    life = 3;
 
     hitbox.setSize(sf::Vector2f(16, 16));
     hitbox.setTexture(&hitboxTexture);
@@ -41,7 +42,9 @@ Player::Player(sf::RenderWindow& window,
 
 void Player::updateSprite(sf::RenderWindow& window,
     int frame,
-    std::vector<Bullet>& bullets,
+    std::vector<Bullet>& playerBullets,
+    std::vector<Enemy>& enemies,
+    std::vector<std::vector<std::vector<Bullet>>>& bullets,
     std::map<std::string, sf::Texture>& textureMap
 )
 {
@@ -157,13 +160,80 @@ void Player::updateSprite(sf::RenderWindow& window,
     {
         if (shootCooldown <= 0)
         {
-            bullets.push_back(Bullet(textureMap, sf::Vector2f(getPosition().x, getPosition().y - 112), 270, -1, 15, "", true));
-            bullets.push_back(Bullet(textureMap, sf::Vector2f(getPosition().x-25, getPosition().y - 112), 270, -1, 15, "", true));
+            playerBullets.push_back(Bullet(textureMap,
+                sf::Vector2f(getPosition().x, getPosition().y - 112),
+                270,
+                -1,
+                15,
+                "",
+                true
+            ));
+            playerBullets.push_back(Bullet(textureMap,
+                sf::Vector2f(getPosition().x-25, getPosition().y - 112),
+                270,
+                -1,
+                15,
+                "",
+                true
+            ));
             shootCooldown = (60 / shootSpeed);
         }
     }
     shootCooldown--;
 
+    for (Bullet& bullet : playerBullets)
+    {
+        for (Enemy& enemy : enemies)
+        {
+            sf::FloatRect hb1 = enemy.getHitbox();
+            sf::FloatRect hb2 = bullet.getHitbox();
+
+            if (hb1.intersects(hb2) && enemy.getRender() && bullet.getRender())
+            {
+                bullet.setRender(false);
+                enemy.setRender(false);
+            }
+        }
+    }
+
+    for (int i = 0; i < bullets.size(); i++)
+    {
+        for (int j = 0; j < bullets[i].size(); j++)
+        {
+            for (Bullet& bullet : bullets[i][j])
+            {
+                if (bullet.getHitbox().intersects(getHitbox()) && immunity <= 0 &&
+                    bullet.getRender())
+                {
+                    bullet.setRender(false);
+                    life -= 1;
+                    immunity = 240;
+                }
+            }
+        }
+    }
+
+    if (lifeStars.size() < life)
+    {
+        for(int i = 0; i < life; i++)
+            lifeStars.push_back(sf::Sprite());
+    }
+    else if (lifeStars.size() > life)
+    {
+        while(lifeStars.size() > life)
+            lifeStars.pop_back();
+    }
+
+    for (int i = 0; i < life; i++)
+    {
+        
+        lifeStars[i].setTexture(textureMap["lifeStar"]);
+        lifeStars[i].setPosition(window.getSize().x - 26 * i - 26, 10);
+        lifeStars[i].setScale(2, 2);
+        window.draw(lifeStars[i]);
+    }
+    
+    immunity--;
     window.draw(sprite);
     if (drawHitbox)
         window.draw(hitbox);
