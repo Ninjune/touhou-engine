@@ -1,7 +1,5 @@
 #include <fstream>
-#include <iostream> // TEMP
 #include "Pather.h"
-// NOTE lower fps than normal in editor.
 
 
 Pather::Pather(sf::RenderWindow& window,

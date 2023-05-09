@@ -37,7 +37,7 @@ int main()
     std::string state = "loader";
     defineTextures(textureMap);
     definePatterns(patterns);
-    int frame = 0, fps = 0, stageFrame = 0; // update stage frame when stage is loaded
+    int frame = 0, fps = 0, stageFrame = 0, stageLength = 0; // update stage frame when stage is loaded
     bool titleScreen = true;
     sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "real touhou game");
     window.setFramerateLimit(60);
@@ -95,7 +95,14 @@ int main()
         window.clear();
         if (state == "loader")
         {
-            stageLoader.update(window, frame, font);
+            stageLoader.update(window,
+                frame,
+                textureMap,
+                font,
+                state,
+                enemies,
+                stageLength
+            );
         }
         else if (state == "play")
         {
@@ -116,6 +123,7 @@ int main()
             }
 
             player.updateSprite(window, frame, playerBullets, textureMap);
+            stageFrame++;
         }
         else if (state == "edit")
         {
