@@ -25,7 +25,6 @@ Pather::Pather(sf::RenderWindow& window,
     playableArea.setFillColor(sf::Color::Transparent);
     playableArea.setOutlineColor(sf::Color::White);
     playableArea.setOutlineThickness(1);
-    stageLength = 0;
 
     numKeys.push_back(Keybind(sf::Keyboard::Num1));
     numKeys.push_back(Keybind(sf::Keyboard::Num2));
@@ -52,7 +51,7 @@ Pather::Pather(sf::RenderWindow& window,
 }
 
 
-void Pather::poll(sf::Event& event)
+void Pather::poll(sf::Event& event, int stageLength)
 {
     if (stageLength == 0 && event.type == sf::Event::TextEntered)
     {
@@ -74,9 +73,14 @@ void Pather::poll(sf::Event& event)
 void Pather::update(sf::RenderWindow& window,
     int& frame,
     std::map<std::string, sf::Texture>& textureMap,
-    std::map<std::string, BulletPattern>& patterns
+    std::map<std::string, BulletPattern>& patterns,
+    std::vector<Enemy>& enemies,
+    int stageLength
 )
 {
+    if(patherEnemies.size() == 0)
+        patherEnemies = enemies;
+
     // make stage loader to import stage or create new > enter stage len
     pathRender.clear();
     if (stageLength == 0)
@@ -200,6 +204,7 @@ void Pather::update(sf::RenderWindow& window,
         // we only want to update this when we have selected an enemy
         bulletPatternMenu.update(window, frame, patherEnemies, selectedEnemyIndex, textureMap, timeline.getCurrentFrame());
         
+        // HERE enemy is unable to move when in editor
         draw(textureMap, window, frame, patterns);
     }
 }
@@ -235,7 +240,7 @@ sf::Vector2f Pather::playableToPather(sf::Vector2f point,
 Path Pather::getSelectedEnemyPath()
 {
     if (selectedEnemyIndex >= 0 && selectedEnemyIndex < patherEnemies.size())
-        return patherEnemies[selectedEnemyIndex].getPath(); // returning something innacurate
+        return patherEnemies[selectedEnemyIndex].getPath();
     else
         return {};
 }
@@ -253,7 +258,7 @@ void Pather::draw(std::map<std::string, sf::Texture>& textureMap,
 
     for (Enemy& enemy : patherEnemies)
         enemy.updateSprite(textureMap, window, frame,
-            patherBullets, timeline.getCurrentFrame());
+            patherBullets, timeline.getCurrentFrame(), true);
     for (Tool& tool : tools)
         tool.update(window, frame, tools);
 }

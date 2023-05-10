@@ -65,7 +65,7 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            pather.poll(event);
+            pather.poll(event, stageLength);
         }
         
         if (!window.hasFocus())
@@ -128,7 +128,7 @@ int main()
         }
         else if (state == "edit")
         {
-            pather.update(window, frame, textureMap, patterns);
+            pather.update(window, frame, textureMap, patterns, enemies, stageLength);
         }
 
         text.setString(textString);
