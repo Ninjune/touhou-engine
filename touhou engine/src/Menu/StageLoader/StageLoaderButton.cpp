@@ -63,3 +63,9 @@ std::string StageLoaderButton::getStageName()
 {
 	return stage;
 }
+
+
+void StageLoaderButton::setState(std::string in)
+{
+	state = in;
+}

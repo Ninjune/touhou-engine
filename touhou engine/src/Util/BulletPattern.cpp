@@ -47,10 +47,13 @@ void BulletPattern::update(sf::RenderWindow& window,
 	int& stageFrame,
 	sf::Vector2f enemyPos,
 	int fireFrame,
-	std::vector<sf::Vector2f> path // HERE
+	std::vector<sf::Vector2f> path,
+	sf::RectangleShape playableArea,
+	int startFrame,
+	bool pather // HERE
 )
 {
-	if (bulletsIndex == -1)
+	if (bulletsIndex == -1 || bulletsIndex >= bullets.size())
 	{
 		bullets.push_back({}); // push an empty array
 		bulletsIndex = bullets.size() - 1;
@@ -70,11 +73,6 @@ void BulletPattern::update(sf::RenderWindow& window,
 			}
 		}
 	}
-	if (changeWithEnemy || origin.x <= -1)
-	{
-		origin = enemyPos;
-		changeWithEnemy = true;
-	}
 
 	// burst
 	int burstNum = (stageFrame - fireFrame) / frequency + 1;
@@ -86,11 +84,15 @@ void BulletPattern::update(sf::RenderWindow& window,
 
 	for (unsigned int i = 0; i < burstNum; i++)
 	{
+		if (fireFrame - startFrame + frequency * i >= path.size())
+			continue;
 		for (unsigned int j = 0; j < bullets[bulletsIndex][i].size(); j++)
 		{
 			bullets[bulletsIndex][i][j].simulateFrames(window,
 				(stageFrame - fireFrame + 1) - frequency * i,
-				origin
+				pather ? playableToPather(path[fireFrame-startFrame + frequency*i],
+					window, playableArea) :
+					path[fireFrame-startFrame + frequency*i]
 			);
 		}
 	}
@@ -103,15 +105,29 @@ std::string BulletPattern::getName()
 }
 
 
-int BulletPattern::getBulletIndex()
+sf::Vector2f BulletPattern::playableToPather(sf::Vector2f point,
+	sf::RenderWindow& window,
+	sf::RectangleShape& playableArea
+)
 {
-	return bulletsIndex;
+	return sf::Vector2f(
+		(point.x - playableArea.getPosition().x) /
+		window.getSize().x * playableArea.getSize().x +
+		playableArea.getPosition().x,
+		(point.y - playableArea.getPosition().y) /
+		window.getSize().y * playableArea.getSize().y +
+		playableArea.getPosition().y
+	);
 }
 
 
-int BulletPattern::getFrequency()
+std::map<std::string, float> BulletPattern::getOptions()
 {
-	return frequency;
+	std::map<std::string, float> map;
+	map["originX"] = origin.x;
+	map["originY"] = origin.y;
+	//map[""]
+	return map; // HERE make pattern maker & check if enemies are reset after going back to stage loader.
 }
 /*
 FILE FORMAT:

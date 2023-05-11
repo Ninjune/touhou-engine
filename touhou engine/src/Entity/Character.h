@@ -7,11 +7,14 @@ public:
 	void setRender(bool);
 	bool getRender();
 	void modifyHitbox(float modifier); // hitboxSize *= modifier
+	void changeLife(int modifier); // life += modifier
 	sf::Vector2f getPosition();
 	sf::FloatRect getHitbox();
 protected:
 	sf::Sprite sprite;
 	int spriteLeft, spriteTop, spriteWidth, spriteHeight;
+	// you will need to manually immunity-- in whatever entity is using it's update.
+	int life, immunity, immunityMax;
 private:
 	bool render;
 	float hitboxMod;

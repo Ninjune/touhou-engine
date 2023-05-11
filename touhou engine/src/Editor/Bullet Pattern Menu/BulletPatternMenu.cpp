@@ -108,7 +108,8 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 	std::vector<Enemy>& enemies,
 	int& selectedEnemyIndex,
 	std::map<std::string, sf::Texture>& textureMap,
-	int currentFrame
+	int currentFrame,
+	bool& patternChanger
 )
 {
 	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
@@ -134,19 +135,28 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 			for (BulletPatternButton& button : buttons)
 				button.moveDown();
 		}
-		else if (addPatternButton.getGlobalBounds().contains(mousePos))
+		else if (addPatternButton.checkMouse(window))
 		{
 			// add pattern editor
-			addPatternButton.setState(true);
+			addPatternButton.setState(!addPatternButton.getState());
 		}
 	}
 	
 
 	for (unsigned int i = first; i <= last && i < buttons.size(); i++)
-		buttons[buttonOrder[i]].update(window, frame, enemies, selectedEnemyIndex, textureMap, currentFrame);
+		buttons[buttonOrder[i]].update(window,
+			frame,
+			enemies,
+			selectedEnemyIndex,
+			textureMap,
+			currentFrame,
+			patternChanger,
+			buttons
+		);
 
 	window.draw(menuRect);
 	addPatternButton.draw(window);
+	//patternChanger = addPatternButton.getState();
 
 	if (buttons.size() > 9)
 	{

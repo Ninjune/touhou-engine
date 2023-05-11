@@ -75,10 +75,13 @@
     <ClCompile Include="src\Util\MenuButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Menu\StageLoader.cpp">
+    <ClCompile Include="src\Menu\StageLoader\StageLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Menu\StageLoaderButton.cpp">
+    <ClCompile Include="src\Menu\StageLoader\StageLoaderButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor\Bullet Pattern Menu\PatternChanger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,10 +125,13 @@
     <ClInclude Include="src\Util\MenuButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Menu\StageLoader.h">
+    <ClInclude Include="src\Menu\StageLoader\StageLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Menu\StageLoaderButton.h">
+    <ClInclude Include="src\Menu\StageLoader\StageLoaderButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor\Bullet Pattern Menu\PatternChanger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

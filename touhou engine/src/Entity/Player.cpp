@@ -190,8 +190,8 @@ void Player::updateSprite(sf::RenderWindow& window,
 
             if (hb1.intersects(hb2) && enemy.getRender() && bullet.getRender())
             {
-                bullet.setRender(false);
-                enemy.setRender(false);
+                bullet.changeLife(-1);
+                enemy.changeLife(-1);
             }
         }
     }
@@ -207,7 +207,7 @@ void Player::updateSprite(sf::RenderWindow& window,
                 {
                     bullet.setRender(false);
                     life -= 1;
-                    immunity = 240;
+                    immunity = immunityMax;
                 }
             }
         }
@@ -237,4 +237,10 @@ void Player::updateSprite(sf::RenderWindow& window,
     window.draw(sprite);
     if (drawHitbox)
         window.draw(hitbox);
+}
+
+
+void Player::reset()
+{
+    life = 3;
 }

@@ -28,9 +28,6 @@ void Enemy::init(int type,
     setTexture(texture);
     sprite.setOrigin(spriteWidth / 2, spriteHeight / 2);
     sprite.setTextureRect(sf::IntRect(spriteLeft, spriteTop, spriteWidth, spriteHeight));
-
-    originAdjust.x = -1;
-    originAdjust.y = -1;
 }
 
 
@@ -43,7 +40,8 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
     bool pather
 )
 {
-    if (path.size() < 1) return;
+    if (path.size() < 1 || life <= 0)
+        return;
     if (frame % 6 == 0) // 1/10 of a second
     {
         spriteLeft += 32;
@@ -87,7 +85,9 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
     for (unsigned int i = 0; i < patterns.size(); i++)
     {
         patterns[i].update(window, textureMap, bullets, stageFrame,
-            sprite.getPosition(), patternStartTimes[i]);
+            sprite.getPosition(), patternStartTimes[i], path, playableArea,
+            startFrame, pather
+        );
     }
 
     if (stageFrame < startFrame || stageFrame > startFrame + path.size())
@@ -95,8 +95,6 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
     else
         setRender(true);
 
-    originAdjust.x = -1;
-    originAdjust.y = -1;
     if(getRender())
         window.draw(sprite);
 }
@@ -139,20 +137,6 @@ void Enemy::setPosition(sf::Vector2f pos,
         path[i].x += pos.x - sprite.getPosition().x;
         path[i].y += pos.y - sprite.getPosition().y;
     }
-    int bulletsIndex;
-
-    for (BulletPattern& pattern : patterns)
-    {
-        bulletsIndex = pattern.getBulletIndex();
-        for (unsigned int i = 0; i < bullets[bulletsIndex].size(); i++)
-        {
-            for (unsigned int j = 0; j < bullets[bulletsIndex][i].size(); j++)
-            {
-                bullets[bulletsIndex][i][j].adjust(path, pattern.getFrequency(), i);
-            }
-        }
-    }
-    
 }
 
 

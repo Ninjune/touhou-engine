@@ -1,5 +1,5 @@
-#include "../Util/MenuButton.h"
-#include "../Util/Keybind.h"
+#include "../../Util/MenuButton.h"
+#include "../../Util/Keybind.h"
 #pragma once
 
 
@@ -16,6 +16,7 @@ public:
 	void update(sf::RenderWindow& window, int& frame);
 	std::string getState();
 	std::string getStageName();
+	void setState(std::string in);
 private:
 	sf::RectangleShape mainRect;
 	MenuButton edit, play;

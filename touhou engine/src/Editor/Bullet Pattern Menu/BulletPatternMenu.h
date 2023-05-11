@@ -18,7 +18,8 @@ public:
 		std::vector<Enemy>& enemies,
 		int& selectedEnemyIndex,
 		std::map<std::string, sf::Texture>& textureMap,
-		int currentFrame
+		int currentFrame,
+		bool& patternChanger
 	);
 private:
 	Keybind m1;

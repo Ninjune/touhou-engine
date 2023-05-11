@@ -6,6 +6,8 @@
 #include "../Entity/Enemy.h"
 #include "Tool.h"
 #include "Bullet Pattern Menu/BulletPatternMenu.h"
+#include "Bullet Pattern Menu/PatternChanger.h"
+#include <fstream>
 // this is the "stage editor".
 
 
@@ -43,7 +45,8 @@ private:
 	sf::Vector2f mousePos;
 	int selectedEnemyIndex;
 	std::vector<std::vector<std::vector<Bullet>>> patherBullets;
-	bool selecting, canDuplicate, enterStageName, loaded;
+	bool selecting, canDuplicate, enterStageName, loaded, patternChanging;
+	PatternChanger patternChanger;
 
 	void draw(std::map<std::string, sf::Texture>&,
 		sf::RenderWindow& window,

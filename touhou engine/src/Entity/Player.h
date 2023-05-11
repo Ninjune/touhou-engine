@@ -17,10 +17,11 @@ public:
 		std::vector<std::vector<std::vector<Bullet>>>& bullets,
 		std::map<std::string, sf::Texture>& textureMap
 	);
+	void reset();
 private:
 	sf::Texture hitboxTexture;
 	sf::RectangleShape hitbox;
-	int leftPhase, rightPhase, life, immunity;
+	int leftPhase, rightPhase;
 	int speed, shootSpeed; // shootSpeed is amount of shots in a second.
 	int shootCooldown; // frames til can shoot again
 	std::map<sf::Keyboard::Key, sf::Vector2f> movementKeyMap;

@@ -1,4 +1,3 @@
-
 #include "BulletPatternButton.h"
 
 
@@ -24,10 +23,14 @@ BulletPatternButton::BulletPatternButton(sf::Vector2f menuPos,
 	patternName.setString(pattern.getName());
 	patternName.setFont(font);
 
-	setPosition(mainRectangle.getPosition().x + menuSize.x/6*5, 
+	play.setPosition(mainRectangle.getPosition().x + menuSize.x/6*5, 
 		mainRectangle.getPosition().y);
-	setSize(sf::Vector2f(menuSize.x/6, mainRectangle.getSize().y));
-	setOutlineThickness(1);
+	play.setSize(sf::Vector2f(menuSize.x/6, mainRectangle.getSize().y));
+	play.setOutlineThickness(1);
+
+	edit.setPosition(play.getPosition().x - menuSize.x/6, mainRectangle.getPosition().y);
+	edit.setSize(sf::Vector2f(menuSize.x / 6, mainRectangle.getSize().y));
+	edit.setOutlineThickness(1);
 }
 
 
@@ -36,7 +39,9 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 	std::vector<Enemy>& enemies,
 	int& selectedEnemyIndex,
 	std::map<std::string, sf::Texture>& textureMap,
-	int currentFrame
+	int currentFrame,
+	bool& patternChanging,
+	std::vector<BulletPatternButton>& buttons
 ) 
 {
 	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
@@ -44,38 +49,60 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 	);
 	std::vector<std::string> patternCopy = enemies[selectedEnemyIndex].getPatterns();
 	std::vector<int> startCopy = enemies[selectedEnemyIndex].getStartTimes();
-	setState(false);
+	play.setState(false);
 
 	for (unsigned int i = 0; i < startCopy.size(); i++)
 		if (startCopy[i] == currentFrame &&
 			patternCopy[i] == getName()
 		)
-			setState(true);
+			play.setState(true);
 	
-	if (getGlobalBounds().contains(mousePos) &&
-		m1.consumeClick(frame, 20)
-	)
+	if (!patternChanging && play.checkMouse(window) && m1.consumeClick(frame, 20))
 	{
-		if (!getState() && enemies[selectedEnemyIndex].getRender())
+		if (!play.getState() && enemies[selectedEnemyIndex].getRender())
 		{
 			enemies[selectedEnemyIndex].pushToPatterns(bulletPattern, currentFrame);
-			setState(true);
+			play.setState(true);
 		}
 		else
 		{
 			enemies[selectedEnemyIndex].eraseFromPatterns(currentFrame);
-			setState(false);
+			play.setState(false);
 		}
 	}
 
-	if (!getState())
-		setupSprite(textureMap["plusIcon"], 512, 512);
-	else
-		setupSprite(textureMap["minusIcon"], 512, 512);
+	if (edit.checkMouse(window) && m1.consumeClick(frame, 20, 1))
+	{
+		bool temp;
 
+		temp = edit.getState();
+		for (BulletPatternButton& button : buttons)
+			button.disableEdit();
+		edit.setState(!temp);
+
+		if (edit.getState())
+			patternChanging = true;
+		else
+			patternChanging = false;
+
+		
+	}
+
+	if (!play.getState())
+		play.setupSprite(textureMap["plusIcon"], 512, 512);
+	else
+		play.setupSprite(textureMap["minusIcon"], 512, 512);
+	edit.setupSprite(textureMap["pencilIcon"], 512, 512);
+
+	if (!edit.getState())
+		edit.setFillColor(sf::Color::Transparent);
+	else
+		edit.setFillColor(sf::Color(39, 170, 245, 73));
+	
 	window.draw(patternName);
 	window.draw(mainRectangle);
-	draw(window);
+	edit.draw(window);
+	play.draw(window);
 }
 
 
@@ -85,17 +112,24 @@ std::string BulletPatternButton::getName()
 }
 
 
-bool BulletPatternButton::getStatus()
+bool BulletPatternButton::getPlayStatus()
 {
-	return getState();
+	return play.getState();
 }
+
+
+void BulletPatternButton::disableEdit()
+{
+	edit.setState(false);
+}
+
 
 void BulletPatternButton::moveUp()
 {
 	mainRectangle.move(0, 32);
 	patternName.move(0, 32);
-	move(0, 32);
-	sprite.move(0, 32);
+	play.move(0, 32);
+	play.sprite.move(0, 32);
 }
 
 
@@ -103,6 +137,6 @@ void BulletPatternButton::moveDown()
 {
 	mainRectangle.move(0, -32);
 	patternName.move(0, -32);
-	move(0, -32);
-	sprite.move(0, -32);
+	play.move(0, -32);
+	play.sprite.move(0, -32);
 }

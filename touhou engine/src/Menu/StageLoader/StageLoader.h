@@ -2,7 +2,7 @@
 #include <fstream>
 #include <filesystem>
 #include "StageLoaderButton.h"
-#include "../Entity/Enemy.h"
+#include "../../Entity/Enemy.h"
 #pragma once
 
 class StageLoader

@@ -14,7 +14,6 @@ public:
 	bool getState();
 	bool checkMouse(sf::RenderWindow& window);
 	void draw(sf::RenderWindow& window);
-protected:
 	sf::Sprite sprite;
 private:
 	bool state;

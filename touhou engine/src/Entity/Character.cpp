@@ -8,6 +8,9 @@ Character::Character()
 	render = true;
 	spriteLeft = 0, spriteTop = 0, spriteWidth = 0, spriteHeight = 0;
 	hitboxMod = 1.f;
+	immunity = 0;
+	immunityMax = 120;
+	life = 1;
 }
 
 
@@ -40,4 +43,10 @@ bool Character::getRender()
 sf::Vector2f Character::getPosition()
 {
 	return sprite.getPosition();
+}
+
+
+void Character::changeLife(int mod)
+{
+	life += mod;
 }

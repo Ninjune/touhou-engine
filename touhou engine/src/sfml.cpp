@@ -13,7 +13,7 @@ make sure to make instructions/readme explaining the premise of the game, contro
 #include "Entity/Enemy.h"
 #include "Util/Keybind.h"
 #include "Editor/Pather.h"
-#include "Menu/StageLoader.h"
+#include "Menu/StageLoader/StageLoader.h"
 
 const int SCREENWIDTH = 1422, SCREENHEIGHT = 800;
 void defineTextures(std::map<std::string, sf::Texture>& textureMap);
@@ -51,7 +51,7 @@ int main()
     text.setFont(font);
 
     Player player(window, textureMap);
-    Keybind eKey(sf::Keyboard::E), pKey(sf::Keyboard::P), RBracketKey(sf::Keyboard::RBracket);
+    Keybind eKey(sf::Keyboard::E), pKey(sf::Keyboard::P), escKey(sf::Keyboard::Escape);
     Pather pather(window, font, textureMap, SCREENWIDTH, SCREENHEIGHT, patterns);
     std::vector<Enemy> enemies;
     std::vector<Bullet> playerBullets;
@@ -90,6 +90,13 @@ int main()
         {
             state = "edit";
             playerBullets.clear();
+        }
+
+        if (escKey.consumeClick(frame, 15))
+        {
+            state = "loader";
+            stageFrame = 0;
+            player.reset();
         }
 
         window.clear();
@@ -194,8 +201,6 @@ void definePatterns(std::map<std::string, BulletPattern>& patterns)
                 spawnDirection >> spawnDirectionChange >> velocity >> velocityChange >>
                 bulletType;
         }
-        else
-            throw "file not found?";
 
         patterns[patternName] = BulletPattern(origin, frequency, burstCount,
             burstSize, burstSizeChange, direction, directionChange, spawnDirection,

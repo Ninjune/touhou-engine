@@ -1,4 +1,3 @@
-#include <fstream>
 #include "Pather.h"
 
 
@@ -150,6 +149,18 @@ void Pather::update(sf::RenderWindow& window,
 
         prompt(window, "Enter stage name (no commas ',' or semicolons ';'): " + inputStr);
     }
+    else if (patternChanging)
+    {
+        patternChanger.update(window, frame, bulletPatternMenu, patterns);
+        bulletPatternMenu.update(window,
+            frame,
+            patherEnemies,
+            selectedEnemyIndex,
+            textureMap,
+            timeline.getCurrentFrame(),
+            patternChanging
+        );
+    }
     else
     {
         mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x,
@@ -207,7 +218,14 @@ void Pather::update(sf::RenderWindow& window,
         
 
         // we only want to update this when we have selected an enemy
-        bulletPatternMenu.update(window, frame, patherEnemies, selectedEnemyIndex, textureMap, timeline.getCurrentFrame());
+        bulletPatternMenu.update(window,
+            frame,
+            patherEnemies,
+            selectedEnemyIndex,
+            textureMap,
+            timeline.getCurrentFrame(),
+            patternChanging
+        );
         
         // HERE enemy is unable to move when in editor
         draw(textureMap, window, frame, patterns);

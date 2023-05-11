@@ -27,19 +27,28 @@ public:
 		int& stageFrame,
 		sf::Vector2f origin,
 		int fireFrame,
-		std::vector<sf::Vector2f> path
+		std::vector<sf::Vector2f> path,
+		sf::RectangleShape playableArea,
+		int startFrame,
+		bool pather = false
 	);
-	int getBulletIndex();
-	int getFrequency();
 	std::string getName();
+	// these are public because im not making a setter/getter for all of these.
+	std::map<std::string, float> getOptions();
+	void setOptions(std::map<std::string, float>);
 private:
-	sf::Vector2f origin;
 	int frequency, burstCount,
 		burstSize, burstSizeChange,
-	    direction, directionChange,
-	    spawnDirection, spawnDirectionChange;
+		direction, directionChange,
+		spawnDirection, spawnDirectionChange;
 	double velocity, velocityChange;
+	sf::Vector2f playableToPather(sf::Vector2f point,
+		sf::RenderWindow& window,
+		sf::RectangleShape& playableArea
+	);
+	sf::Vector2f origin;
 	int bulletsIndex;
+	std::map<std::string, float> options;
 	std::string bulletType;
 	std::string name;
 	std::vector<int> reservedBullets;

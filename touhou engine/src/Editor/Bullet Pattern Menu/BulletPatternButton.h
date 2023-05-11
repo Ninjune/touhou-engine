@@ -4,7 +4,7 @@
 #include "../../Util/MenuButton.h"
 #pragma once
 
-class BulletPatternButton : MenuButton
+class BulletPatternButton
 {
 public:
 	BulletPatternButton(sf::Vector2f menuPos,
@@ -18,15 +18,19 @@ public:
 		std::vector<Enemy>& enemies,
 		int& selectedEnemyIndex,
 		std::map<std::string, sf::Texture>& textureMap,
-		int currentFrame
+		int currentFrame,
+		bool& patternChanger,
+		std::vector<BulletPatternButton>& buttons
 	);
-	bool getStatus();
+	bool getPlayStatus();
 	std::string getName();
 	void moveUp();
 	void moveDown();
+	void disableEdit();
 private:
 	sf::Text patternName;
 	Keybind m1;
+	MenuButton edit, play;
 	sf::RectangleShape mainRectangle;
 	BulletPattern bulletPattern;
 };

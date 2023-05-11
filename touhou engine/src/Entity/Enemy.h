@@ -46,7 +46,6 @@ private:
 	float moveX, moveY;
 	int startFrame;
 	void moveToPoint(sf::Vector2f, int framesToTake);
-	sf::Vector2f originAdjust;
 	sf::Clock timer;
 	std::vector<BulletPattern> patterns;
 	std::vector<int> patternStartTimes;

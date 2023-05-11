@@ -64,6 +64,7 @@ void StageLoader::update(sf::RenderWindow& window,
 		if (button.getState() != "loader")
 		{
 			state = button.getState();
+			button.setState("loader");
 			fstr.open(folderName + "/" + button.getStageName() + ".stg");
 			
 			std::getline(fstr, input);

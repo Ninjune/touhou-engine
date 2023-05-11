@@ -26,6 +26,7 @@ void Bullet::setup(std::map<std::string, sf::Texture>& textureMap,
     playerOwned = playerOwnedIn;
     spriteWidth = 16;
     spriteHeight = 32;
+    life = 1;
     if (playerOwned)
     {
         sprite.setTexture(textureMap["player"]);
@@ -76,7 +77,7 @@ void Bullet::updateSprite(sf::RenderWindow& window, int frame)
         window.draw(sprite);
         aliveFrames++;
     }
-    else if (getRender())
+    else if (getRender() && life > 0)
         window.draw(sprite);
 }
 
@@ -88,11 +89,7 @@ void Bullet::simulateFrames(sf::RenderWindow& window,
 {
     if (playerOwned)
         return;
-    if (firstFrame)
-    {
-        origin = originIn;
-        firstFrame = false;
-    }
+    origin = originIn;
 
     sprite.setPosition(origin);
     bool negX = direction - 180 >= 0;
@@ -105,12 +102,6 @@ void Bullet::simulateFrames(sf::RenderWindow& window,
         sprite.move(velocity * percentX * (negX ? -1 : 1),
             velocity * percentY * (negY ? -1 : 1)
         );
-    sf::RectangleShape drawnOrigin;
-    drawnOrigin.setPosition(origin);
-    drawnOrigin.setFillColor(sf::Color::Red);
-    drawnOrigin.setSize(sf::Vector2f(1, 1));
-
-    window.draw(drawnOrigin);
     window.draw(sprite);
 }
 
