@@ -48,6 +48,7 @@ Pather::Pather(sf::RenderWindow& window,
     selecting = false;
     canDuplicate = false;
     enterStageName = false;
+    loaded = false;
 }
 
 
@@ -78,10 +79,14 @@ void Pather::update(sf::RenderWindow& window,
     int stageLength
 )
 {
-    if(patherEnemies.size() == 0)
+    if (!loaded)
+    {
         patherEnemies = enemies;
+        for (Enemy& enemy : patherEnemies)
+            enemy.setPlayableArea(playableArea);
+        loaded = true;
+    }
 
-    // make stage loader to import stage or create new > enter stage len
     pathRender.clear();
     if (stageLength == 0)
     {
@@ -175,7 +180,7 @@ void Pather::update(sf::RenderWindow& window,
         }
 
         if (tools[0].getStatus() || tools[2].getStatus()) // select
-            continuing = selectTool(window, frame);
+            continuing = selectTool(window, frame, patherBullets);
         else if (tools[1].getStatus()) // draw
             continuing = drawTool(window, frame);
 
@@ -276,7 +281,10 @@ void Pather::prompt(sf::RenderWindow& window, std::string input)
 }
 
 
-bool Pather::selectTool(sf::RenderWindow& window, int& frame)
+bool Pather::selectTool(sf::RenderWindow& window,
+    int& frame,
+    std::vector<std::vector<std::vector<Bullet>>>& bullets
+)
 {
     for (unsigned int i = 0; i < patherEnemies.size(); i++)
     {
@@ -318,7 +326,7 @@ bool Pather::selectTool(sf::RenderWindow& window, int& frame)
     hitboxOutline.setOutlineThickness(1);
 
     if (selecting)
-        selectedEnemy.setPosition(mousePos);
+        selectedEnemy.setPosition(mousePos, bullets);
 
     if (backspace.consumeClick(frame, 20) || delkey.consumeClick(frame, 20))
     {

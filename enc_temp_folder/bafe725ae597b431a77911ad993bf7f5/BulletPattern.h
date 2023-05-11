@@ -26,8 +26,7 @@ public:
 		std::vector<std::vector<std::vector<Bullet>>>& bullets,
 		int& stageFrame,
 		sf::Vector2f origin,
-		int fireFrame,
-		std::vector<sf::Vector2f> path
+		int fireFrame
 	);
 	int getBulletIndex();
 	int getFrequency();

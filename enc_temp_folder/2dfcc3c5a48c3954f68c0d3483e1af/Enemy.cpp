@@ -140,6 +140,9 @@ void Enemy::setPosition(sf::Vector2f pos,
         path[i].y += pos.y - sprite.getPosition().y;
     }
     int bulletsIndex;
+    sf::Vector2f adjust;
+    adjust.x = pos.x - sprite.getPosition().x;
+    adjust.y = pos.y - sprite.getPosition().y;
 
     for (BulletPattern& pattern : patterns)
     {

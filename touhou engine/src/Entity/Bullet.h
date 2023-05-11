@@ -19,6 +19,7 @@ public:
 		int simulatedFrames,
 		sf::Vector2f originIn
 	);
+	void adjust(std::vector<sf::Vector2f> path, int frequency, int num);
 	float getBulletSpeed();
 	void setBulletSpeed(float);
 	int getBulletType();

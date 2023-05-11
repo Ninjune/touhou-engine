@@ -46,8 +46,7 @@ void BulletPattern::update(sf::RenderWindow& window,
 	std::vector<std::vector<std::vector<Bullet>>>& bullets, // first for each pattern, second for each burst, third for each bullet
 	int& stageFrame,
 	sf::Vector2f enemyPos,
-	int fireFrame,
-	std::vector<sf::Vector2f> path // HERE
+	int fireFrame
 )
 {
 	if (bulletsIndex == -1)

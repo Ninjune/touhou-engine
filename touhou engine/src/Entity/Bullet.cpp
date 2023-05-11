@@ -81,7 +81,10 @@ void Bullet::updateSprite(sf::RenderWindow& window, int frame)
 }
 
 
-void Bullet::simulateFrames(sf::RenderWindow& window, int simulatedFrames, sf::Vector2f originIn)
+void Bullet::simulateFrames(sf::RenderWindow& window,
+    int simulatedFrames,
+    sf::Vector2f originIn
+)
 {
     if (playerOwned)
         return;
@@ -90,22 +93,7 @@ void Bullet::simulateFrames(sf::RenderWindow& window, int simulatedFrames, sf::V
         origin = originIn;
         firstFrame = false;
     }
-    /* move bullet simulatedFrames* movePerFrame TEMP remove later
-    split velocity between x and y based on direction 0 = up, 90 = right, 180 = down, 270 = left
-    x = right, -x = left, -y = up, y = down
-    HERE
-    0 = 0, -100%,
-    45 = 50%, -50%,
-    90 = 100%, -0%,
-    135 = 50%, 50%,
-    180 = 0%, 100%
-    225 = 50%, 50%
-    270 = 100%, 0%
-    0 - 90 : pos, neg
-    91 - 180 : pos, pos
-    181 - 270 : neg pos
-    271 - 360 : neg neg
-    */
+
     sprite.setPosition(origin);
     bool negX = direction - 180 >= 0;
     bool negY = direction < 91 || direction > 270;
@@ -117,7 +105,20 @@ void Bullet::simulateFrames(sf::RenderWindow& window, int simulatedFrames, sf::V
         sprite.move(velocity * percentX * (negX ? -1 : 1),
             velocity * percentY * (negY ? -1 : 1)
         );
+    sf::RectangleShape drawnOrigin;
+    drawnOrigin.setPosition(origin);
+    drawnOrigin.setFillColor(sf::Color::Red);
+    drawnOrigin.setSize(sf::Vector2f(1, 1));
+
+    window.draw(drawnOrigin);
     window.draw(sprite);
+}
+
+
+void Bullet::adjust(std::vector<sf::Vector2f> path, int frequency, int index)
+{
+    origin.x = path[frequency * index].x;
+    origin.y = path[frequency * index].y;
 }
 
 

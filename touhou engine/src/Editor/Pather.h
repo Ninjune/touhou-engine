@@ -43,7 +43,7 @@ private:
 	sf::Vector2f mousePos;
 	int selectedEnemyIndex;
 	std::vector<std::vector<std::vector<Bullet>>> patherBullets;
-	bool selecting, canDuplicate, enterStageName;
+	bool selecting, canDuplicate, enterStageName, loaded;
 
 	void draw(std::map<std::string, sf::Texture>&,
 		sf::RenderWindow& window,
@@ -52,7 +52,8 @@ private:
 	);
 	void prompt(sf::RenderWindow& window, std::string input);
 	bool selectTool(sf::RenderWindow& window,
-		int& frame
+		int& frame,
+		std::vector<std::vector<std::vector<Bullet>>>& bullets // to move bullets
 	);
 	bool drawTool(sf::RenderWindow& window,
 		int& frame

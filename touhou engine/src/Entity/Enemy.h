@@ -18,12 +18,13 @@ public:
 		int currentFrame,
 		bool pather = true
 	);
-	bool isPathFine();
 	void setTexture(sf::Texture& texture);
 	void setType(int type);
 	void setPathSpeed(int);
 	void setPlayableArea(sf::RectangleShape in);
-	void setPosition(sf::Vector2f pos);
+	void setPosition(sf::Vector2f pos,
+		std::vector<std::vector<std::vector<Bullet>>>& bullets
+	);
 	void setStartFrame(int);
 	Path getPath();
 	std::vector<std::string> getPatterns();
@@ -45,8 +46,7 @@ private:
 	float moveX, moveY;
 	int startFrame;
 	void moveToPoint(sf::Vector2f, int framesToTake);
-	std::vector<Bullet> bullets;
-	bool pathFine;
+	sf::Vector2f originAdjust;
 	sf::Clock timer;
 	std::vector<BulletPattern> patterns;
 	std::vector<int> patternStartTimes;
