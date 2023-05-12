@@ -147,7 +147,7 @@
     <ClCompile Include="src\Util\Path.cpp" />
     <ClCompile Include="src\Editor\Pather.cpp" />
     <ClCompile Include="src\Entity\Player.cpp" />
-    <ClCompile Include="src\sfml.cpp" />
+    <ClCompile Include="src\touhou engine.cpp" />
     <ClCompile Include="src\Editor\Timeline.cpp" />
     <ClCompile Include="src\Editor\Tool.cpp" />
     <ClCompile Include="src\Menu\StageLoader\StageLoader.cpp" />
