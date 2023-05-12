@@ -84,8 +84,6 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 			patternChanging = getName();
 		else
 			patternChanging = "";
-
-		
 	}
 
 	if (!play.getState())

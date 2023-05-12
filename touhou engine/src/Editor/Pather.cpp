@@ -11,7 +11,7 @@ Pather::Pather(sf::RenderWindow& window,
     upKey(sf::Keyboard::Up), downKey(sf::Keyboard::Down), m1(sf::Mouse::Left),
     pathRender(sf::LinesStrip), timeline(window.getSize().x, window.getSize().y, font),
     playableArea(sf::Vector2f(window.getSize().x * 0.7, window.getSize().y * 0.7)),
-    rKey(sf::Keyboard::R), m2(sf::Mouse::Right), backspace(sf::Keyboard::Backspace),
+    m2(sf::Mouse::Right), backspace(sf::Keyboard::Backspace),
     delkey(sf::Keyboard::Delete), eKey(sf::Keyboard::E)
 {
     SCREENHEIGHT = screenHIn;
@@ -48,6 +48,7 @@ Pather::Pather(sf::RenderWindow& window,
     canDuplicate = false;
     enterStageName = false;
     loaded = false;
+    addingPattern = false;
 }
 
 
@@ -225,7 +226,8 @@ void Pather::update(sf::RenderWindow& window,
             patherEnemies.push_back(Enemy(0, textures["enemy"]));
             selectedEnemyIndex = patherEnemies.size() - 1;
             patherEnemies[selectedEnemyIndex].setPlayableArea(playableArea);
-            patherEnemies[selectedEnemyIndex].setStartFrame(timeline.getCurrentFrame());
+            patherEnemies[selectedEnemyIndex]
+                .setStartFrame(timeline.getCurrentFrame());
         }
 
         if (tools[0].getStatus() || tools[2].getStatus()) // select
@@ -245,8 +247,6 @@ void Pather::update(sf::RenderWindow& window,
             );
         }
 
-        if (rKey.consumeClick(frame, 20))
-            patherEnemies[selectedEnemyIndex].clearPath();
         if (upKey.consumeClick(frame, 5))
             patherEnemies[selectedEnemyIndex]
             .setPathSpeed(selectedEnemyPath.getPathSpeed() + 1);

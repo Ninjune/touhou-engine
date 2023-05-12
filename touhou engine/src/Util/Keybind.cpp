@@ -24,7 +24,8 @@ bool Keybind::consumeClick(int& frame, int framesToWait, int id)
 		cooldowns[id] = framesToWait;
 		return false;
 	}
-	else if ((frame-initialFrames[id] >= cooldowns[id]) && (isKey() ? sf::Keyboard::isKeyPressed(key) : sf::Mouse::isButtonPressed(button)))
+	else if ((frame-initialFrames[id] >= cooldowns[id]) &&
+		(isKey() ? sf::Keyboard::isKeyPressed(key) : sf::Mouse::isButtonPressed(button)))
 	{
 		initialFrames[id] = frame;
 		cooldowns[id] = framesToWait;

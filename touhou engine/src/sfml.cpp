@@ -20,16 +20,6 @@ void defineTextures(std::map<std::string, sf::Texture>& textureMap);
 void definePatterns(std::map<std::string, BulletPattern>&);
 void map(std::map<std::string, sf::Texture>& textureMap, std::string name,
     std::string texturePath);
-/*
-Todo:
-- Enemy bullets
-- Dying
-- Stages
-- Title screen
-- Score
-- Bomb?
-- other characters IF have time
-*/
 
 int main()
 {
@@ -56,7 +46,7 @@ int main()
     gameText.setFont(font);
 
     Player player(window, textureMap);
-    Keybind eKey(sf::Keyboard::E), pKey(sf::Keyboard::P), escKey(sf::Keyboard::Escape);
+    Keybind escKey(sf::Keyboard::Escape);
     Pather pather(window, font, textureMap, SCREENWIDTH, SCREENHEIGHT, patterns);
     std::vector<Enemy> enemies;
     std::vector<Bullet> playerBullets;
@@ -91,13 +81,6 @@ int main()
                 "\nExport path : 'E'" : "")
             );
         lastTime = std::chrono::high_resolution_clock::now();
-
-        if (pKey.consumeClick(frame, 15))
-        {
-            pather.reload();
-            state = "edit";
-            playerBullets.clear();
-        }
 
         if (escKey.consumeClick(frame, 15))
         {
@@ -158,9 +141,9 @@ int main()
         {
             gameText.setString("STAGE COMPLETE!\nHit Escape to return to loader.");
         }
-        else if (state == "lose\nHit Escape to return to loader.")
+        else if (state == "lose")
         {
-            gameText.setString("lose");
+            gameText.setString("lose\nHit Escape to return to loader.");
         }
         sf::FloatRect textRect = gameText.getLocalBounds();
         gameText.setOrigin(textRect.left + textRect.width / 2.0f,
@@ -195,7 +178,10 @@ void defineTextures(std::map<std::string, sf::Texture>& textureMap)
 }
 
 
-void map(std::map<std::string, sf::Texture>& textureMap, std::string name, std::string texturePath)
+void map(std::map<std::string, sf::Texture>& textureMap,
+    std::string name,
+    std::string texturePath
+)
 {
     textureMap[name] = sf::Texture();
     textureMap[name].loadFromFile(texturePath);

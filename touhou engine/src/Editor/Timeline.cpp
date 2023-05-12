@@ -2,7 +2,8 @@
 
 Timeline::Timeline(const int windowWidth, const int windowHeight,
 	sf::Font& font)
-	: left(sf::Keyboard::Left), right(sf::Keyboard::Right), m1(sf::Mouse::Left), spacebar(sf::Keyboard::Space)
+	: left(sf::Keyboard::Left), right(sf::Keyboard::Right),
+	m1(sf::Mouse::Left), spacebar(sf::Keyboard::Space)
 {
 	outerRectangle.setFillColor(sf::Color::Transparent);
 	outerRectangle.setOutlineColor(sf::Color::White);
@@ -46,7 +47,8 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 	bool run = true;
 	sf::FloatRect tempRect;
 	int low = 0, high = bounds.size()-1, middle;
-	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x,
+		sf::Mouse::getPosition(window).y);
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
@@ -71,7 +73,9 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 		}
 	}
 
-	if ((m1.consumeClick(frame, 20) && playButton.getGlobalBounds().contains(mousePos)) || spacebar.consumeClick(frame, 20))
+	if ((m1.consumeClick(frame, 20) &&
+		playButton.getGlobalBounds().contains(mousePos)) ||
+		spacebar.consumeClick(frame, 20))
 	{
 		playButton.setState(!playButton.getState());
 		if (currentFrame >= stageLength - 1)
@@ -107,7 +111,7 @@ void Timeline::update(sf::RenderWindow& window, int& frame)
 			currentFrame += 60;
 		else if (currentFrame + 1 < stageLength)
 			currentFrame += 1;
-	} // make sure to document controls later
+	}
 
 	if (currentFrame >= stageLength)
 		currentFrame = stageLength - 1;
@@ -134,7 +138,9 @@ void Timeline::setStageLength(int in)
 	{
 		tempRect.height = innerRectangle.getSize().y;
 		tempRect.width = innerRectangle.getSize().x;
-		tempRect.left = (outerRectangle.getPosition().x - outerRectangle.getSize().x / 2) + outerRectangle.getSize().x / stageLength * i;
+		tempRect.left = (outerRectangle.getPosition().x -
+			outerRectangle.getSize().x / 2) +
+			outerRectangle.getSize().x / stageLength * i;
 		tempRect.top = outerRectangle.getPosition().y - outerRectangle.getSize().y / 2;
 		bounds.push_back(tempRect);
 	}

@@ -44,7 +44,6 @@ void Prompter::prompt(sf::RenderWindow& window, std::string input, int& frame)
         cursorIndex += 1;
 
     cursor.setSize(sf::Vector2f(3, getCharacterSize()));
-    //cursor.setOrigin(0, getCharacterSize() / 2);
     cursor.setPosition(findCharacterPos(cursorIndex));
 
     window.draw(*this);
@@ -77,7 +76,7 @@ void Prompter::poll(sf::Event& event,
     }
     else if ((unicode >= min && unicode <= max &&
         !search(exceptions, unicode)) || 
-        (search(includes, unicode))
+        (search(includes, unicode ))
         )
         if (useCursor)
         {

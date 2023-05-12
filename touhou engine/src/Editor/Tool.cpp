@@ -4,7 +4,6 @@ Tool::Tool(sf::Texture& in, float x, float y, int size, int spriteSize, bool in2
 	: m1(sf::Mouse::Left)
 {
 	setSize(sf::Vector2f(size, size));
-	//setOrigin(size/2, size/2);
 	setPosition(x, y);
 	setOutlineThickness(1);
 
@@ -13,9 +12,13 @@ Tool::Tool(sf::Texture& in, float x, float y, int size, int spriteSize, bool in2
 }
 
 
-void Tool::update(sf::RenderWindow& window, int& frame, std::vector<Tool>& tools)
+void Tool::update(sf::RenderWindow& window,
+	int& frame,
+	std::vector<Tool>& tools
+)
 {
-	const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+	const sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x,
+		sf::Mouse::getPosition(window).y);
 	if (getGlobalBounds().contains(mousePos) && m1.consumeClick(frame, 20))
 	{
 		for (Tool& tool : tools)

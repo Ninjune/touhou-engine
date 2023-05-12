@@ -29,7 +29,11 @@ void Enemy::init(int type,
     setType(type);
     setTexture(texture);
     sprite.setOrigin(spriteWidth / 2, spriteHeight / 2);
-    sprite.setTextureRect(sf::IntRect(spriteLeft, spriteTop, spriteWidth, spriteHeight));
+    sprite.setTextureRect(sf::IntRect(spriteLeft,
+        spriteTop,
+        spriteWidth,
+        spriteHeight
+    ));
 }
 
 
@@ -66,7 +70,6 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
         {
             moveX = 0;
             moveY = 0;
-            //std::cout << timer.getElapsedTime().asMilliseconds() << " " << 60 * path.getPathSpeed() / path.size() << "\n";
             moveToPoint(path[point], 60 * path.getPathSpeed() / path.size()); 
             point++;
         }
@@ -96,10 +99,7 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
 
         if (!inBounds)
         {
-            patterns.erase(patterns.begin() + i);
-            /* make an array that stores these^ don't simulate the frames from those and make a way to remove 
-            them at some point in editor for them to come back when in editor. finish demo stage. write read me.
-            check everything follows standards (header). check we got everything in proposal. turn in.*/
+            // if we ever run into memory issues with bullets we can remove here but I cba to add rn.
         }
     }
 

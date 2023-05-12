@@ -25,7 +25,7 @@ Player::Player(sf::RenderWindow& window,
     hitbox.setTexture(&hitboxTexture);
     hitbox.setOrigin(8, 8);
     hitbox.setScale(1.3f, 1.3f);
-    modifyHitbox(0.3);
+    modifyHitbox(0.15);
 
     movementKeyMap[sf::Keyboard::Left] = sf::Vector2f(-speed, 0);
     movementKeyMap[sf::Keyboard::Right] = sf::Vector2f(speed, 0);

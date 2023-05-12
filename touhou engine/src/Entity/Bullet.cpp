@@ -10,7 +10,14 @@ Bullet::Bullet(std::map<std::string, sf::Texture>& textureMap,
     bool playerOwnedIn
 )
 {
-    setup(textureMap, originIn, directionIn, spawnDirectionIn, velocityIn, bulletTypeIn, playerOwnedIn);
+    setup(textureMap,
+        originIn,
+        directionIn,
+        spawnDirectionIn,
+        velocityIn,
+        bulletTypeIn,
+        playerOwnedIn
+    );
 }
 
 
@@ -68,8 +75,11 @@ void Bullet::updateSprite(sf::RenderWindow& window, int frame)
 
         if (aliveFrames < 11)
         {
-            sprite.setTextureRect(sf::IntRect(sprite.getTextureRect().left - 4, sprite.getTextureRect().top,
-                sprite.getTextureRect().width, sprite.getTextureRect().height));
+            sprite.setTextureRect(sf::IntRect(sprite.getTextureRect().left - 4,
+                sprite.getTextureRect().top,
+                sprite.getTextureRect().width,
+                sprite.getTextureRect().height
+            ));
         }
 
         window.draw(sprite);
@@ -112,21 +122,8 @@ void Bullet::simulateFrames(sf::RenderWindow& window,
     }
 
     sprite.setPosition(origin);
-    /*bool negX = direction - 180 >= 0;
-    bool negY = direction < 91 || direction > 270;
-    float percentX = negX ? 1. * (direction % 90) / 90 : -1;
-    float percentY = negX ? 1. - percentX : 1. * (direction % 90)/90;*/
-    //if (percentX == -1)
-    //    percentX = 1. - percentY;
-    //for(int i = 0; i < simulatedFrames; i++)
-    //    sprite.move(velocity * percentX * (negX ? -1 : 1),
-    //       velocity * percentY * (negY ? -1 : 1)
-    //    );
-    for (int i = 0; i < simulatedFrames; i++)
-    {
-        sprite.move(velocity * cos(direction * 3.1415 / 180), 
-            velocity * sin(direction * 3.1415 / 180));
-    }
+    sprite.move(simulatedFrames*velocity * cos(direction * 3.1415 / 180),
+        simulatedFrames * velocity * sin(direction * 3.1415 / 180));
     if (sf::FloatRect(sf::Vector2f(0, 0),
         sf::Vector2f(window.getSize().x, window.getSize().y))
         .contains(sprite.getPosition())

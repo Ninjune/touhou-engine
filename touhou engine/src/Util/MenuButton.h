@@ -1,9 +1,8 @@
 #include <SFML/Graphics.hpp>
 #pragma once
 
-/*
-Used to generalize some parts of buttons.
-*/
+
+//Used to generalize some parts of buttons.
 class MenuButton : public sf::RectangleShape
 {
 public:

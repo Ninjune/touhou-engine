@@ -2,7 +2,8 @@
 
 BulletPattern::BulletPattern() // dont use
 {
-
+	changeWithEnemy = false;
+	bulletsIndex = -1;
 }
 
 
@@ -70,7 +71,8 @@ void BulletPattern::update(sf::RenderWindow& window,
 
 	// burst
 	inBounds = true;
-	int burstNum = ((deadFrame == -1 ? stageFrame : deadFrame) - fireFrame) / frequency + 1;
+	int burstNum = ((deadFrame == -1 ? stageFrame : deadFrame) - fireFrame)
+		/ frequency + 1;
 	if (burstNum < 1 || stageFrame < fireFrame)
 		return;
 

@@ -36,7 +36,7 @@ public:
 	void reload();
 	Path getSelectedEnemyPath();
 private:
-	Keybind upKey, downKey, m1, rKey, m2, backspace, delkey, eKey;
+	Keybind upKey, downKey, m1, m2, backspace, delkey, eKey;
 	std::vector<Keybind> numKeys;
 	sf::VertexArray pathRender;
 	int SCREENHEIGHT, SCREENWIDTH;

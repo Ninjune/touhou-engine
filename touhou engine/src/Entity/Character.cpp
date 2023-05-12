@@ -53,7 +53,7 @@ void Character::changeLife(int mod)
 }
 
 
-void Character::renderHitbox(sf::RenderWindow& window) // for debug & selcet
+void Character::renderHitbox(sf::RenderWindow& window) // for debug & select
 {
 	sf::RectangleShape rect;
 	sf::FloatRect hb = getHitbox();

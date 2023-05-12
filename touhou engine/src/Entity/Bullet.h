@@ -37,7 +37,7 @@ private:
 		bool playerOwned
 	);
 	int aliveFrames, bulletType, direction;
-	float xOffset, velocity; // negative = go up, pos = go down
+	float xOffset, velocity;
 	bool playerOwned, firstFrame;
 	sf::Vector2f origin, playerPos; // playerPos is the playerPos when bullet created
 };

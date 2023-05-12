@@ -25,7 +25,8 @@ bool Path::smoothPath()
         return true;
     
     for (int i = 0; i < size() - 1; i++) 
-        totalLength += sqrt(pow(at(i + 1).x - at(i).x, 2) + pow(at(i + 1).y - at(i).y, 2));
+        totalLength += sqrt(pow(at(i + 1).x - at(i).x, 2) +
+            pow(at(i + 1).y - at(i).y, 2));
 
     segmentLength = totalLength/ size()-1;
 
@@ -45,7 +46,8 @@ bool Path::smoothPath()
 
             newPath.push_back(sf::Vector2f(x, y));
 
-            segmentDistance = sqrt(pow(at(i + 1).x - x, 2) + pow(at(i + 1).y - y, 2));
+            segmentDistance = sqrt(pow(at(i + 1).x - x, 2) +
+                pow(at(i + 1).y - y, 2));
             distanceSinceLastPoint = 0;
         }
         distanceSinceLastPoint += segmentDistance;
