@@ -1,6 +1,6 @@
 
 # Touhou Engine
-Project for school.
+Project for school. Allows you to make stages to make something akin to a Touhou game.
 
 ## To build:
 - Open *.sln in visual studio 2022.
