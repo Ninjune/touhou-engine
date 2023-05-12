@@ -8,4 +8,4 @@ To build:
 - must build using C++17 or above.
 
 Textures are not mine:
-- Everything except selection & pencil icon from the Touhou series. (th15)
+- Everything except icons from the Touhou series. (th15)
