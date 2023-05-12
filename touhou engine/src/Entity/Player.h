@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "Bullet.h"
 #include "Enemy.h"
+#include "../Util/Keybind.h"
 #pragma once
 
 class Player : public Character
@@ -18,14 +19,14 @@ public:
 		std::map<std::string, sf::Texture>& textureMap
 	);
 	void reset();
+	int getLife();
 private:
 	sf::Texture hitboxTexture;
 	sf::RectangleShape hitbox;
 	int leftPhase, rightPhase;
-	int speed, shootSpeed; // shootSpeed is amount of shots in a second.
-	int shootCooldown; // frames til can shoot again
+	int speed, shootCD; // shootSpeed is amount of shots in a second.
 	std::map<sf::Keyboard::Key, sf::Vector2f> movementKeyMap;
 	std::vector<sf::Keyboard::Key> movementKeys;
-	sf::Keyboard::Key shootKey;
+	Keybind Z;
 	std::vector<sf::Sprite> lifeStars;
 };

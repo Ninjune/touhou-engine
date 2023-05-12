@@ -4,11 +4,9 @@
 BulletPatternButton::BulletPatternButton(sf::Vector2f menuPos,
 	sf::Vector2f menuSize,
 	std::vector<BulletPatternButton> buttons,
-	BulletPattern pattern,
+	BulletPattern& pattern,
 	sf::Font& font
-) :
-	bulletPattern(pattern),
-	m1(sf::Mouse::Left)
+) : m1(sf::Mouse::Left)
 {
 	mainRectangle.setPosition(menuPos.x, menuPos.y + 32 * buttons.size() - 1);
 	mainRectangle.setSize(sf::Vector2f(menuSize.x, 32));
@@ -40,8 +38,9 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 	int& selectedEnemyIndex,
 	std::map<std::string, sf::Texture>& textureMap,
 	int currentFrame,
-	bool& patternChanging,
-	std::vector<BulletPatternButton>& buttons
+	std::string& patternChanging,
+	std::vector<BulletPatternButton>& buttons,
+	std::map<std::string, BulletPattern>& patterns
 ) 
 {
 	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
@@ -57,11 +56,12 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 		)
 			play.setState(true);
 	
-	if (!patternChanging && play.checkMouse(window) && m1.consumeClick(frame, 20))
+	if (patternChanging == "" && play.checkMouse(window) && m1.consumeClick(frame, 20))
 	{
 		if (!play.getState() && enemies[selectedEnemyIndex].getRender())
 		{
-			enemies[selectedEnemyIndex].pushToPatterns(bulletPattern, currentFrame);
+			enemies[selectedEnemyIndex]
+				.pushToPatterns(patterns[patternName.getString()], currentFrame);
 			play.setState(true);
 		}
 		else
@@ -81,9 +81,9 @@ void BulletPatternButton::update(sf::RenderWindow& window,
 		edit.setState(!temp);
 
 		if (edit.getState())
-			patternChanging = true;
+			patternChanging = getName();
 		else
-			patternChanging = false;
+			patternChanging = "";
 
 		
 	}
@@ -128,8 +128,9 @@ void BulletPatternButton::moveUp()
 {
 	mainRectangle.move(0, 32);
 	patternName.move(0, 32);
+
 	play.move(0, 32);
-	play.sprite.move(0, 32);
+	edit.move(0, 32);
 }
 
 
@@ -137,6 +138,7 @@ void BulletPatternButton::moveDown()
 {
 	mainRectangle.move(0, -32);
 	patternName.move(0, -32);
+
 	play.move(0, -32);
-	play.sprite.move(0, -32);
+	edit.move(0, -32);
 }

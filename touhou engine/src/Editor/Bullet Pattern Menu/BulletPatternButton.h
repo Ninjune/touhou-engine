@@ -10,7 +10,7 @@ public:
 	BulletPatternButton(sf::Vector2f menuPos,
 		sf::Vector2f menuSize,
 		std::vector<BulletPatternButton> buttons,
-		BulletPattern pattern,
+		BulletPattern& pattern,
 		sf::Font& font
 	);
 	void update(sf::RenderWindow& window,
@@ -19,8 +19,9 @@ public:
 		int& selectedEnemyIndex,
 		std::map<std::string, sf::Texture>& textureMap,
 		int currentFrame,
-		bool& patternChanger,
-		std::vector<BulletPatternButton>& buttons
+		std::string& patternChanger,
+		std::vector<BulletPatternButton>& buttons,
+		std::map<std::string, BulletPattern>& patterns
 	);
 	bool getPlayStatus();
 	std::string getName();
@@ -32,6 +33,5 @@ private:
 	Keybind m1;
 	MenuButton edit, play;
 	sf::RectangleShape mainRectangle;
-	BulletPattern bulletPattern;
 };
 

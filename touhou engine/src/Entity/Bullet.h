@@ -17,7 +17,9 @@ public:
 	void updateSprite(sf::RenderWindow& window, int frame);
 	void simulateFrames(sf::RenderWindow& window,
 		int simulatedFrames,
-		sf::Vector2f originIn
+		sf::Vector2f originIn,
+		sf::Vector2f playerPosIn,
+		bool& inBounds
 	);
 	void adjust(std::vector<sf::Vector2f> path, int frequency, int num);
 	float getBulletSpeed();
@@ -37,5 +39,5 @@ private:
 	int aliveFrames, bulletType, direction;
 	float xOffset, velocity; // negative = go up, pos = go down
 	bool playerOwned, firstFrame;
-	sf::Vector2f origin;
+	sf::Vector2f origin, playerPos; // playerPos is the playerPos when bullet created
 };

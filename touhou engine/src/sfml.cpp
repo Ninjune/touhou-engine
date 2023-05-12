@@ -18,7 +18,8 @@ make sure to make instructions/readme explaining the premise of the game, contro
 const int SCREENWIDTH = 1422, SCREENHEIGHT = 800;
 void defineTextures(std::map<std::string, sf::Texture>& textureMap);
 void definePatterns(std::map<std::string, BulletPattern>&);
-void map(std::map<std::string, sf::Texture>& textureMap, std::string name, std::string texturePath);
+void map(std::map<std::string, sf::Texture>& textureMap, std::string name,
+    std::string texturePath);
 /*
 Todo:
 - Enemy bullets
@@ -39,16 +40,20 @@ int main()
     definePatterns(patterns);
     int frame = 0, fps = 0, stageFrame = 0, stageLength = 0; // update stage frame when stage is loaded
     bool titleScreen = true;
-    sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "real touhou game");
+    sf::RenderWindow window(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT),
+        "real touhou game");
     window.setFramerateLimit(60);
-    std::chrono::steady_clock::time_point lastTime = std::chrono::high_resolution_clock::now(), currentTime;
+    std::chrono::steady_clock::time_point lastTime =
+        std::chrono::high_resolution_clock::now(), currentTime;
 
     const std::string fontPath = "C:\\Windows\\Fonts\\arial.ttf";
     sf::Font font;
     font.loadFromFile(fontPath);
-    sf::Text text;
+    sf::Text infoText;
     std::string textString;
-    text.setFont(font);
+    infoText.setFont(font);
+    sf::Text gameText;
+    gameText.setFont(font);
 
     Player player(window, textureMap);
     Keybind eKey(sf::Keyboard::E), pKey(sf::Keyboard::P), escKey(sf::Keyboard::Escape);
@@ -57,6 +62,7 @@ int main()
     std::vector<Bullet> playerBullets;
     std::vector<std::vector<std::vector<Bullet>>> bullets;
     StageLoader stageLoader;
+    
 
     while (window.isOpen())
     {
@@ -65,7 +71,7 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            pather.poll(event, stageLength);
+            pather.poll(event, stageLength, patterns);
         }
         
         if (!window.hasFocus())
@@ -88,6 +94,7 @@ int main()
 
         if (pKey.consumeClick(frame, 15))
         {
+            pather.reload();
             state = "edit";
             playerBullets.clear();
         }
@@ -97,9 +104,13 @@ int main()
             state = "loader";
             stageFrame = 0;
             player.reset();
+            stageLoader.checkStages();
+            pather.reload();
+            enemies.clear();
         }
 
         window.clear();
+        gameText.setString("");
         if (state == "loader")
         {
             stageLoader.update(window,
@@ -116,30 +127,49 @@ int main()
         {
             for (unsigned int i = 0; i < playerBullets.size(); i++)
             {
-                // if (!playerBullets[i].getRender())
-                //    playerBullets.erase(playerBullets.begin() + i);
-                //else
+                if (!playerBullets[i].getRender())
+                    playerBullets.erase(playerBullets.begin() + i);
+                else if (!sf::FloatRect(sf::Vector2f(0, 0),
+                    sf::Vector2f(window.getSize().x, window.getSize().y))
+                    .contains(playerBullets[i].getPosition()))
+                    playerBullets.erase(playerBullets.begin() + i);
+                else
                     playerBullets[i].updateSprite(window, frame);
             }
 
             for (unsigned int i = 0; i < enemies.size(); i++)
-            {
-               // if (!enemies[i].getRender())
-               //     enemies.erase(enemies.begin() + i);
-               //else
-                    enemies[i].updateSprite(textureMap, window, frame, bullets, stageFrame, false);
-            }
+                enemies[i].updateSprite(textureMap, window, frame, bullets,
+                    stageFrame, player.getPosition(), false);
 
-            player.updateSprite(window, frame, playerBullets, enemies, bullets, textureMap);
+            player.updateSprite(window, frame, playerBullets, enemies, bullets,
+                textureMap);
             stageFrame++;
+
+            if (stageFrame > stageLength)
+                state = "win";
+            else if (player.getLife() <= 0)
+                state = "lose";
         }
         else if (state == "edit")
         {
             pather.update(window, frame, textureMap, patterns, enemies, stageLength);
         }
+        else if (state == "win")
+        {
+            gameText.setString("STAGE COMPLETE!\nHit Escape to return to loader.");
+        }
+        else if (state == "lose\nHit Escape to return to loader.")
+        {
+            gameText.setString("lose");
+        }
+        sf::FloatRect textRect = gameText.getLocalBounds();
+        gameText.setOrigin(textRect.left + textRect.width / 2.0f,
+            textRect.top + textRect.height / 2.0f);
+        gameText.setPosition(window.getSize().x / 2, window.getSize().y / 2);
+        window.draw(gameText);
 
-        text.setString(textString);
-        window.draw(text);
+        infoText.setString(textString);
+        window.draw(infoText);
         window.display();
         frame++;
     }
@@ -161,6 +191,7 @@ void defineTextures(std::map<std::string, sf::Texture>& textureMap)
     map(textureMap, "plusIcon", "textures/icons/plus.png");
     map(textureMap, "minusIcon", "textures/icons/minus.png");
     map(textureMap, "upIcon", "textures/icons/upArrow.png");
+    map(textureMap, "trashIcon", "textures/icons/trashIcon.png");
 }
 
 
@@ -176,35 +207,29 @@ void definePatterns(std::map<std::string, BulletPattern>& patterns)
     const std::string folderName = "patterns/";
     std::string patternName;
     unsigned int count = 0;
-
-    // all of these will be passed through to BulletPattern
-    sf::Vector2f origin;
-    int frequency, burstCount,
-        burstSize, burstSizeChange,
-        direction, directionChange,
-        spawnDirection, spawnDirectionChange;
-    double velocity, velocityChange;
+    std::map<std::string, float> options;
     std::string bulletType;
-
     std::fstream patternFile;
 
     for (std::filesystem::directory_entry file :
     std::filesystem::directory_iterator(folderName))
     {
+        options.clear();
         patternName = file.path().string().substr(9, file.path().string().find_first_of(".") - 9);
-        patternFile.open(folderName + "/" + patternName + ".txt");
+        patternFile.open(folderName + "/" + patternName + ".txt", std::ios::in);
 
         if (patternFile.is_open())
         {
-            patternFile >> origin.x >> origin.y >> frequency >> burstCount >>
-                burstSize >> burstSizeChange >> direction >> directionChange >>
-                spawnDirection >> spawnDirectionChange >> velocity >> velocityChange >>
-                bulletType;
+            patternFile >> options["originX"] >> options["originY"] >>
+                options["frequency"] >> options["burstCount"] >> options["burstSize"] >>
+                options["burstSizeChange"] >> options["direction"] >>
+                options["directionChange"] >> options["spawnDirection"] >>
+                options["spawnDirectionChange"] >> options["velocity"] >>
+                options["velocityChange"] >> bulletType;
         }
 
-        patterns[patternName] = BulletPattern(origin, frequency, burstCount,
-            burstSize, burstSizeChange, direction, directionChange, spawnDirection,
-            spawnDirectionChange, velocity, velocityChange, bulletType, patternName
-        );
+        patterns[patternName] = BulletPattern(options, bulletType, patternName);
+        patternFile.close();
     }
+
 }

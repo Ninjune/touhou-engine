@@ -3,7 +3,8 @@
 
 Player::Player(sf::RenderWindow& window,
         std::map<std::string, sf::Texture>& textureMap
-    )
+)
+    : Z(sf::Keyboard::Z)
 {
     spriteLeft = 0;
     spriteTop = 0;
@@ -16,21 +17,20 @@ Player::Player(sf::RenderWindow& window,
     sprite.setPosition(window.getSize().x/2.f,
         window.getSize().y - window.getSize().y/6.f);
 
-    shootSpeed = 5;
+    shootCD = 5;
     speed = 6;
-    shootCooldown = 0;
     life = 3;
 
     hitbox.setSize(sf::Vector2f(16, 16));
     hitbox.setTexture(&hitboxTexture);
     hitbox.setOrigin(8, 8);
     hitbox.setScale(1.3f, 1.3f);
+    modifyHitbox(0.3);
 
     movementKeyMap[sf::Keyboard::Left] = sf::Vector2f(-speed, 0);
     movementKeyMap[sf::Keyboard::Right] = sf::Vector2f(speed, 0);
     movementKeyMap[sf::Keyboard::Up] = sf::Vector2f(0, -speed);
     movementKeyMap[sf::Keyboard::Down] = sf::Vector2f(0, speed);
-    shootKey = sf::Keyboard::Z;
 
     for (std::pair<sf::Keyboard::Key, sf::Vector2f> const& key : movementKeyMap)
         movementKeys.push_back(key.first);
@@ -55,7 +55,8 @@ void Player::updateSprite(sf::RenderWindow& window,
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
         currentSpeed = speed/2;
-        hitbox.setPosition(sprite.getPosition());
+        hitbox.setPosition(sprite.getPosition().x, sprite.getPosition().y -
+            sprite.getGlobalBounds().height / 8);
         hitbox.setRotation(hitbox.getRotation() + 0.5);
         drawHitbox = true;
     }
@@ -96,7 +97,7 @@ void Player::updateSprite(sf::RenderWindow& window,
 
                 goingDirection = true;
 
-                if (sprite.getPosition().x + sprite.getOrigin().x*2  - 
+                if (sprite.getPosition().x + sprite.getOrigin().x*2 - 
                     movementKeyMap[key].x < window.getSize().x)
                     sprite.move(movementKeyMap[key]);
             }
@@ -156,30 +157,25 @@ void Player::updateSprite(sf::RenderWindow& window,
         sprite.setTextureRect(sf::IntRect(spriteLeft, spriteTop, 32, 40));
     }
 
-    if (sf::Keyboard::isKeyPressed(shootKey))
+    if (Z.consumeClick(frame, shootCD))
     {
-        if (shootCooldown <= 0)
-        {
-            playerBullets.push_back(Bullet(textureMap,
-                sf::Vector2f(getPosition().x, getPosition().y - 112),
-                270,
-                -1,
-                15,
-                "",
-                true
-            ));
-            playerBullets.push_back(Bullet(textureMap,
-                sf::Vector2f(getPosition().x-25, getPosition().y - 112),
-                270,
-                -1,
-                15,
-                "",
-                true
-            ));
-            shootCooldown = (60 / shootSpeed);
-        }
+        playerBullets.push_back(Bullet(textureMap,
+            sf::Vector2f(getPosition().x, getPosition().y - 112),
+            270,
+            -1,
+            15,
+            "",
+            true
+        ));
+        playerBullets.push_back(Bullet(textureMap,
+            sf::Vector2f(getPosition().x-25, getPosition().y - 112),
+            270,
+            -1,
+            15,
+            "",
+            true
+        ));
     }
-    shootCooldown--;
 
     for (Bullet& bullet : playerBullets)
     {
@@ -231,8 +227,8 @@ void Player::updateSprite(sf::RenderWindow& window,
         lifeStars[i].setPosition(window.getSize().x - 26 * i - 26, 10);
         lifeStars[i].setScale(2, 2);
         window.draw(lifeStars[i]);
-    }
-    
+    }  
+
     immunity--;
     window.draw(sprite);
     if (drawHitbox)
@@ -243,4 +239,10 @@ void Player::updateSprite(sf::RenderWindow& window,
 void Player::reset()
 {
     life = 3;
+}
+
+
+int Player::getLife()
+{
+    return life;
 }

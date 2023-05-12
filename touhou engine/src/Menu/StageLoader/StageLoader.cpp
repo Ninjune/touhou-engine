@@ -2,24 +2,12 @@
 
 
 StageLoader::StageLoader()
+	: m1(sf::Mouse::Left)
 {
-	const std::string folderName = "stages";
-	std::string fileName;
-	std::fstream fstr;
 	menuRect.setFillColor(sf::Color::Transparent);
 	menuRect.setOutlineColor(sf::Color::White);
 	menuRect.setOutlineThickness(2);
-
-	for (std::filesystem::directory_entry file :
-	std::filesystem::directory_iterator(folderName))
-	{
-		fileName = file.path().string().substr(folderName.size()+1,
-			file.path().string().find_first_of(".") - folderName.size()-1);
-		fstr.open(folderName + "/" + fileName + ".stg", std::ios::in);
-
-		if (fstr.is_open())
-			stages.push_back(fileName);
-	}
+	checkStages();
 }
 
 
@@ -37,7 +25,8 @@ void StageLoader::update(sf::RenderWindow& window,
 	std::fstream fstr;
 
 	// temp things for loading below
-	std::string input, tempStr;
+	std::string input, tempStr, tempKey;
+
 	int enemyCount = 0, patternCount = 0;
 	sf::Vector2f tempVec;
 	std::vector<std::vector<std::string>> enemyPatterns(1);
@@ -45,6 +34,19 @@ void StageLoader::update(sf::RenderWindow& window,
 	menuRect.setSize(sf::Vector2f(window.getSize().x/3*2, window.getSize().y/5*4));
 	menuRect.setPosition(window.getSize().x/2-menuRect.getSize().x/2,
 		window.getSize().y/2 - menuRect.getSize().y/2);
+
+	addStage.setSize(sf::Vector2f(32, 32));
+	addStage.setPosition(window.getSize().x / 2 + addStage.getSize().x / 2,
+		menuRect.getPosition().y + menuRect.getSize().y);
+	addStage.setOutlineThickness(1);
+	addStage.setupSprite(textureMap["plusIcon"], 512, 512);
+
+	if (addStage.checkMouse(window) && m1.consumeClick(frame, 20))
+	{
+		stageLength = 0;
+		enemies.clear();
+		state = "edit";
+	}
 
 	if (buttons.size() == 0)
 	{
@@ -58,6 +60,7 @@ void StageLoader::update(sf::RenderWindow& window,
 			));
 	}
 
+	addStage.draw(window);
 	window.draw(menuRect);
 	for (StageLoaderButton& button : buttons)
 	{
@@ -133,8 +136,11 @@ void StageLoader::update(sf::RenderWindow& window,
 			{
 				if (input[i] == ',')
 				{
+					tempKey = enemyPatterns[enemyCount][patternCount++];
+					if (!patternMap.count(tempKey))
+						continue;
 					enemies[enemyCount].pushToPatterns(
-						patternMap[enemyPatterns[enemyCount][patternCount++]], stoi(tempStr)
+						patternMap[tempKey], stoi(tempStr)
 					);
 					tempStr.erase();
 				}
@@ -150,4 +156,28 @@ void StageLoader::update(sf::RenderWindow& window,
 
 		button.update(window, frame);
 	}
+	fstr.close();
+}
+
+
+void StageLoader::checkStages()
+{
+	stages.clear();
+	buttons.clear();
+	const std::string folderPath = "stages/";
+	std::string fileName;
+	std::fstream fstr;
+
+	for (std::filesystem::directory_entry file :
+	std::filesystem::directory_iterator(folderPath))
+	{
+		fileName = file.path().string().substr(folderPath.size(),
+			file.path().string().find_first_of(".") - folderPath.size());
+		fstr.open(folderPath + fileName + ".stg", std::ios::in);
+
+		if (fstr.is_open())
+			stages.push_back(fileName);
+	}
+
+	fstr.close();
 }

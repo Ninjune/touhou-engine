@@ -1,39 +1,19 @@
 #include "BulletPattern.h"
 
-
-BulletPattern::BulletPattern()
+BulletPattern::BulletPattern() // dont use
 {
 
 }
 
 
-BulletPattern::BulletPattern(sf::Vector2f originIn,
-	int frequencyIn,
-	int burstCountIn,
-	int burstSizeIn,
-	int burstSizeChangeIn,
-	int directionIn,
-	int directionChangeIn,
-	int spawnDirectionIn,
-	int spawnDirectionChangeIn,
-	double velocityIn,
-	double velocityChangeIn,
+BulletPattern::BulletPattern(std::map<std::string, float> optionsIn,
 	std::string bulletTypeIn,
 	std::string nameIn
 )
 {
-	origin = originIn;
-	frequency = frequencyIn; // frequency of bursts (collection of bullets)
-	burstCount = burstCountIn; // amount of bursts
-	burstSize = burstSizeIn; // amount of bullets per burst
-	burstSizeChange = burstSizeChangeIn; // change in burstSize per burst
-	direction = directionIn; // direction in which bullet goes 0-360
-	directionChange = directionChangeIn; // change in direction per burst
-	spawnDirection = spawnDirectionIn; // place to spawn the bullets based on a radius. will spawn in a circle around the target 0-360
-	spawnDirectionChange = spawnDirectionChangeIn; // change between burst
-	velocity = velocityIn; // speed of bullet
-	velocityChange = velocityChangeIn; // velocity change per burst
-	bulletType = bulletTypeIn; // type, TBA
+	options = optionsIn;
+	
+	bulletType = bulletTypeIn; // type, texture basically
 	name = nameIn; // pattern name, set to file name
 
 	bulletsIndex = -1;
@@ -50,9 +30,23 @@ void BulletPattern::update(sf::RenderWindow& window,
 	std::vector<sf::Vector2f> path,
 	sf::RectangleShape playableArea,
 	int startFrame,
-	bool pather // HERE
+	sf::Vector2f playerPos,
+	int deadFrame,
+	bool& inBounds,
+	bool pather
 )
 {
+	int frequency = options["frequency"], // frequency of bursts
+		burstCount = options["burstCount"], // amount of bursts
+		burstSize = options["burstSize"], // amount of bullets per burst
+		burstSizeChange = options["burstSizeChange"], // change in burstSize per burst
+		direction = options["direction"], // direction in which bullet goes 0-360
+		directionChange = options["directionChange"], // change in direction per burst
+		spawnDirection = options["spawnDirection"], // place to spawn the bullets based on a radius. will spawn in a circle around the target 0-360
+		spawnDirectionChange = options["spawnDirectionChange"]; // change between burst
+	float velocity = options["velocity"], // speed of bullet
+		velocityChange = options["velocityChange"]; // velocity change per burst
+
 	if (bulletsIndex == -1 || bulletsIndex >= bullets.size())
 	{
 		bullets.push_back({}); // push an empty array
@@ -64,8 +58,8 @@ void BulletPattern::update(sf::RenderWindow& window,
 			for (unsigned int j = 0; j < burstSize + (burstSizeChange * i); j++)
 			{
 				bullets[bulletsIndex][i].push_back(Bullet(textureMap,
-					origin,
-					direction + (directionChange * i),
+					sf::Vector2f(options["originX"], options["originY"]),
+					direction + (directionChange * j),
 					spawnDirection + (spawnDirectionChange * i),
 					velocity + (velocityChange * i),
 					bulletType
@@ -75,12 +69,16 @@ void BulletPattern::update(sf::RenderWindow& window,
 	}
 
 	// burst
-	int burstNum = (stageFrame - fireFrame) / frequency + 1;
+	inBounds = true;
+	int burstNum = ((deadFrame == -1 ? stageFrame : deadFrame) - fireFrame) / frequency + 1;
 	if (burstNum < 1 || stageFrame < fireFrame)
 		return;
 
-	if (burstNum > burstCount)
+	if (burstNum >= burstCount)
+	{
 		burstNum = burstCount;
+		inBounds = false;
+	}
 
 	for (unsigned int i = 0; i < burstNum; i++)
 	{
@@ -92,7 +90,7 @@ void BulletPattern::update(sf::RenderWindow& window,
 				(stageFrame - fireFrame + 1) - frequency * i,
 				pather ? playableToPather(path[fireFrame-startFrame + frequency*i],
 					window, playableArea) :
-					path[fireFrame-startFrame + frequency*i]
+					path[fireFrame-startFrame + frequency*i], playerPos, inBounds
 			);
 		}
 	}
@@ -123,12 +121,33 @@ sf::Vector2f BulletPattern::playableToPather(sf::Vector2f point,
 
 std::map<std::string, float> BulletPattern::getOptions()
 {
-	std::map<std::string, float> map;
-	map["originX"] = origin.x;
-	map["originY"] = origin.y;
-	//map[""]
-	return map; // HERE make pattern maker & check if enemies are reset after going back to stage loader.
+	return options;
 }
+
+
+ void BulletPattern::setOptions(std::map<std::string, float> in)
+{
+	options = in;
+	std::fstream fstr;
+
+	fstr.open("patterns/" + name + ".txt", std::ios::out);
+
+	fstr << options["originX"] << " " << options["originY"] << " " <<
+		options["frequency"] << " " << options["burstCount"] << " " << 
+		options["burstSize"] << " " << options["burstSizeChange"] << " " << 
+		options["direction"] << " " << options["directionChange"] << " " <<
+		options["spawnDirection"] << " " << options["spawnDirectionChange"] <<
+		" " << options["velocity"] << " " << options["velocityChange"] << " " <<
+		bulletType; // fun
+
+	fstr.close();
+}
+
+
+ void BulletPattern::modifyIndex(int in)
+ {
+	 bulletsIndex += in;
+ }
 /*
 FILE FORMAT:
 originX originY frequency burstCount burstSize burstSizeChange direction (just continued no \n)

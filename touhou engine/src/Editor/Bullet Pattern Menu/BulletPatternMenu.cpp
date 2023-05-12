@@ -70,10 +70,11 @@ void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 	downIcon.setPosition(downButton.getPosition().x, downButton.getPosition().y);
 
 	addPatternButton.setupSprite(textureMap["plusIcon"], 512, 512);
+	pFont = &font;
 
 	unsigned int count = 0;
 	for (std::map<std::string, BulletPattern>::iterator iterator = patterns.begin();
-	iterator != patterns.end(); iterator++)
+		iterator != patterns.end(); iterator++)
 	{
 		patternName = iterator->second.getName();
 
@@ -82,25 +83,13 @@ void BulletPatternMenu::setPatternFolder(std::string patternFolder,
 				menuRect.getSize(),
 				buttons,
 				patterns[patternName],
-				font
-		));
+				*pFont
+			));
 
 		buttonOrder.push_back(count++);
 	}
-	unsigned int temp;
 
-	for (unsigned int i = 0; i < buttons.size() - 1; i++)
-	{
-		for (unsigned int j = 0; j < buttons.size() - i - 1; j++)
-		{
-			if (buttons[buttonOrder[j]].getName() > buttons[buttonOrder[j + 1]].getName())
-			{
-				temp = buttonOrder[j];
-				buttonOrder[j] = buttonOrder[j - 1];
-				buttonOrder[j - 1] = temp;
-			}
-		}
-	}
+	sort();
 }
 
 void BulletPatternMenu::update(sf::RenderWindow& window,
@@ -109,12 +98,15 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 	int& selectedEnemyIndex,
 	std::map<std::string, sf::Texture>& textureMap,
 	int currentFrame,
-	bool& patternChanger
+	std::string& patternChanging,
+	std::map<std::string, BulletPattern>& patterns,
+	bool& addingPattern
 )
 {
-	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x, 
+	sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window).x,
 		sf::Mouse::getPosition(window).y
 	);
+	
 
 	if (m1.consumeClick(frame, 4))
 	{
@@ -127,7 +119,7 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 				button.moveUp();
 		}
 		else if (downButton.getGlobalBounds().contains(mousePos) &&
-			last < buttons.size()-1)
+			last < buttons.size() - 1)
 		{
 			first++;
 			last++;
@@ -138,10 +130,9 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 		else if (addPatternButton.checkMouse(window))
 		{
 			// add pattern editor
-			addPatternButton.setState(!addPatternButton.getState());
+			addingPattern = true;
 		}
 	}
-	
 
 	for (unsigned int i = first; i <= last && i < buttons.size(); i++)
 		buttons[buttonOrder[i]].update(window,
@@ -150,8 +141,9 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 			selectedEnemyIndex,
 			textureMap,
 			currentFrame,
-			patternChanger,
-			buttons
+			patternChanging,
+			buttons,
+			patterns
 		);
 
 	window.draw(menuRect);
@@ -165,5 +157,61 @@ void BulletPatternMenu::update(sf::RenderWindow& window,
 
 		window.draw(downButton);
 		window.draw(downIcon);
+	}
+}
+
+
+void BulletPatternMenu::erase(std::string buttonName)
+{
+	int index = 0;
+
+	for (unsigned int i = 0; i < buttons.size(); i++)
+	{
+		if (buttons[i].getName() == buttonName)
+		{
+			buttons.erase(buttons.begin() + i);
+			while (buttonOrder[index] != i && index < buttonOrder.size())
+				index++;
+			buttonOrder.erase(buttonOrder.begin() + index);
+			for (unsigned int j = 0; j < buttonOrder.size(); j++)
+				if (buttonOrder[j] >= index)
+					buttonOrder[j] -= 1;
+
+			for (unsigned int j = i; j < buttons.size(); j++)
+				buttons[j].moveDown();
+		}
+	}
+}
+
+
+void BulletPatternMenu::addButton(BulletPattern& pattern)
+{
+	buttons.push_back(BulletPatternButton(menuRect.getPosition(),
+		menuRect.getSize(),
+		buttons,
+		pattern,
+		*pFont)
+	);
+	buttonOrder.push_back(buttons.size() - 1);
+}
+
+
+void BulletPatternMenu::sort()
+{
+	unsigned int temp;
+	if (buttons.size() <= 0)
+		return;
+
+	for (unsigned int i = 0; i < buttons.size() - 1; i++)
+	{
+		for (unsigned int j = 0; j < buttons.size() - i - 1; j++)
+		{
+			if (buttons[buttonOrder[j]].getName() > buttons[buttonOrder[j + 1]].getName())
+			{
+				temp = buttonOrder[j];
+				buttonOrder[j] = buttonOrder[j - 1];
+				buttonOrder[j - 1] = temp;
+			}
+		}
 	}
 }

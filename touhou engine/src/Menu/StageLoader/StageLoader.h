@@ -18,8 +18,11 @@ public:
 		int& stageLength,
 		std::map<std::string, BulletPattern>
 	);
+	void checkStages();
 private:
 	sf::RectangleShape menuRect;
 	std::vector<StageLoaderButton> buttons;
 	std::vector<std::string> stages;
+	MenuButton addStage;
+	Keybind m1;
 };

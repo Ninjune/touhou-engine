@@ -16,6 +16,7 @@ public:
 		int frame,
 		std::vector<std::vector<std::vector<Bullet>>>& bullets,
 		int currentFrame,
+		sf::Vector2f playerPos,
 		bool pather = true
 	);
 	void setTexture(sf::Texture& texture);
@@ -44,7 +45,7 @@ private:
 	);
 	int movementFrame, point, enemyType; // type 0-3: small sprites, 
 	float moveX, moveY;
-	int startFrame;
+	int startFrame, deadFrame;
 	void moveToPoint(sf::Vector2f, int framesToTake);
 	sf::Clock timer;
 	std::vector<BulletPattern> patterns;

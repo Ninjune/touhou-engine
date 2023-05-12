@@ -84,6 +84,9 @@
     <ClCompile Include="src\Editor\Bullet Pattern Menu\PatternChanger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Menu\Prompter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Entity\Bullet.h">
@@ -132,6 +135,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Editor\Bullet Pattern Menu\PatternChanger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Menu\Prompter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

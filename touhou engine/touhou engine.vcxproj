@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Menu\Prompter.cpp" />
     <ClCompile Include="src\Editor\Bullet Pattern Menu\PatternChanger.cpp" />
     <ClCompile Include="src\Util\MenuButton.cpp" />
     <ClCompile Include="src\Editor\Bullet Pattern Menu\BulletPatternButton.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="src\Menu\StageLoader\StageLoaderButton.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Menu\Prompter.h" />
     <ClInclude Include="src\Editor\Bullet Pattern Menu\PatternChanger.h" />
     <ClInclude Include="src\Util\MenuButton.h" />
     <ClInclude Include="src\Editor\Bullet Pattern Menu\BulletPatternButton.h" />

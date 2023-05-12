@@ -97,9 +97,8 @@ void Enemy::updateSprite(std::map<std::string, sf::Texture>& textureMap,
         if (!inBounds)
         {
             patterns.erase(patterns.begin() + i);
-            /* make an array that stores these^ don't simulate the frames from those and make a way to remove 
-            them at some point in editor for them to come back when in editor. finish demo stage. write read me.
-            check everything follows standards (header). check we got everything in proposal. turn in.*/
+            //for (unsigned int j = i; j < patterns.size(); j++)
+            //    patterns[j].modifyIndex(-1);
         }
     }
 

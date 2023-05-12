@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <fstream>
 #include "../Entity/Bullet.h"
 
 
@@ -7,19 +8,9 @@ class BulletPattern
 {
 public:
 	BulletPattern();
-	BulletPattern(sf::Vector2f origin,
-		int frequencyIn,
-		int burstCountIn,
-		int burstSizeIn,
-		int burstSizeChangeIn,
-		int directionIn,
-		int directionChangeIn,
-		int spawnDirectionIn,
-		int spawnDirectionChangeIn,
-		double velocityIn,
-		double velocityChangeIn,
-		std::string bulletTypeIn,
-		std::string nameIn
+	BulletPattern(std::map<std::string, float> options,
+		std::string bulletType,
+		std::string name
 	);
 	void update(sf::RenderWindow& window,
 		std::map<std::string, sf::Texture>& textureMap,
@@ -30,18 +21,17 @@ public:
 		std::vector<sf::Vector2f> path,
 		sf::RectangleShape playableArea,
 		int startFrame,
+		sf::Vector2f playerPos,
+		int deadFrame,
+		bool& inBounds,
 		bool pather = false
 	);
 	std::string getName();
-	// these are public because im not making a setter/getter for all of these.
+	// index += in
+	void modifyIndex(int in);
 	std::map<std::string, float> getOptions();
-	void setOptions(std::map<std::string, float>);
+	void setOptions(std::map<std::string, float> options);
 private:
-	int frequency, burstCount,
-		burstSize, burstSizeChange,
-		direction, directionChange,
-		spawnDirection, spawnDirectionChange;
-	double velocity, velocityChange;
 	sf::Vector2f playableToPather(sf::Vector2f point,
 		sf::RenderWindow& window,
 		sf::RectangleShape& playableArea

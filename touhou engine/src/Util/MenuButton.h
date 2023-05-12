@@ -9,7 +9,7 @@ class MenuButton : public sf::RectangleShape
 public:
 	MenuButton();
 	void setState(bool in);
-	// setups the sprite, call after setting position of the button.
+	// setups the sprite, call after setting position of the button. need to set outlineThickness manually.
 	void setupSprite(sf::Texture& texture, int sizeX, int sizeY);
 	bool getState();
 	bool checkMouse(sf::RenderWindow& window);

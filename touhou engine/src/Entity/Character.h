@@ -6,10 +6,13 @@ public:
 	Character();
 	void setRender(bool);
 	bool getRender();
-	void modifyHitbox(float modifier); // hitboxSize *= modifier
-	void changeLife(int modifier); // life += modifier
+	// hitboxSize *= modifier
+	void modifyHitbox(float modifier);
+	// life += modifier
+	void changeLife(int modifier);
 	sf::Vector2f getPosition();
 	sf::FloatRect getHitbox();
+	void renderHitbox(sf::RenderWindow& window);
 protected:
 	sf::Sprite sprite;
 	int spriteLeft, spriteTop, spriteWidth, spriteHeight;

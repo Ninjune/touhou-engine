@@ -1,6 +1,4 @@
 #include "Timeline.h"
-#include <iostream> // temp
-
 
 Timeline::Timeline(const int windowWidth, const int windowHeight,
 	sf::Font& font)

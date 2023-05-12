@@ -17,7 +17,8 @@ Character::Character()
 sf::FloatRect Character::getHitbox()
 {
 	sf::FloatRect spriteBounds = sprite.getGlobalBounds();
-	return sf::FloatRect(spriteBounds.left, spriteBounds.top, 
+	return sf::FloatRect(spriteBounds.left + spriteBounds.width*((1-hitboxMod)/2),
+		spriteBounds.top + spriteBounds.height*((1-hitboxMod)/2),
 		spriteBounds.width * hitboxMod, spriteBounds.height * hitboxMod);
 }
 
@@ -49,4 +50,19 @@ sf::Vector2f Character::getPosition()
 void Character::changeLife(int mod)
 {
 	life += mod;
+}
+
+
+void Character::renderHitbox(sf::RenderWindow& window) // for debug & selcet
+{
+	sf::RectangleShape rect;
+	sf::FloatRect hb = getHitbox();
+
+	rect.setPosition(hb.left, hb.top);
+	rect.setSize(sf::Vector2f(hb.width, hb.height));
+	rect.setFillColor(sf::Color::Transparent);
+	rect.setOutlineThickness(1);
+	rect.setOutlineColor(sf::Color::White);
+
+	window.draw(rect);
 }

@@ -1,5 +1,6 @@
 #include "BulletPatternButton.h"
 #include "../../Entity/Enemy.h"
+#include "../../Menu/Prompter.h"
 
 #pragma once
 class BulletPatternMenu
@@ -19,8 +20,12 @@ public:
 		int& selectedEnemyIndex,
 		std::map<std::string, sf::Texture>& textureMap,
 		int currentFrame,
-		bool& patternChanger
+		std::string& patternChanger,
+		std::map<std::string, BulletPattern>& patterns,
+		bool& addingPattern
 	);
+	void erase(std::string buttonName);
+	void addButton(BulletPattern& pattern);
 private:
 	Keybind m1;
 	sf::RectangleShape menuRect, upButton, downButton;
@@ -29,4 +34,7 @@ private:
 	std::vector<BulletPatternButton> buttons;
 	std::vector<unsigned int> buttonOrder;
 	int first, last;
+	sf::Font* pFont;
+
+	void sort();
 };

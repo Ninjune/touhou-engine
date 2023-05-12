@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <fstream>
 #include "../Util/Keybind.h"
 #include "Timeline.h"
 #include "../Util/Path.h"
@@ -7,7 +8,7 @@
 #include "Tool.h"
 #include "Bullet Pattern Menu/BulletPatternMenu.h"
 #include "Bullet Pattern Menu/PatternChanger.h"
-#include <fstream>
+#include "../Menu/Prompter.h"
 // this is the "stage editor".
 
 
@@ -26,17 +27,20 @@ public:
 		std::map<std::string, sf::Texture>& textureMap,
 		std::map<std::string, BulletPattern>& patterns,
 		std::vector<Enemy>& enemies,
-		int stageLength = -1
+		int& stageLength
 	);
-	void poll(sf::Event&, int stageLength);
+	void poll(sf::Event&,
+		int stageLength,
+		std::map<std::string, BulletPattern>& patterns
+	);
+	void reload();
 	Path getSelectedEnemyPath();
 private:
 	Keybind upKey, downKey, m1, rKey, m2, backspace, delkey, eKey;
 	std::vector<Keybind> numKeys;
 	sf::VertexArray pathRender;
 	int SCREENHEIGHT, SCREENWIDTH;
-	sf::Text inputText;
-	std::string inputStr;
+	std::string inputStr1, inputStr2, inputStr3;
 	std::vector<Tool> tools;
 	Timeline timeline;
 	BulletPatternMenu bulletPatternMenu;
@@ -45,15 +49,16 @@ private:
 	sf::Vector2f mousePos;
 	int selectedEnemyIndex;
 	std::vector<std::vector<std::vector<Bullet>>> patherBullets;
-	bool selecting, canDuplicate, enterStageName, loaded, patternChanging;
+	bool selecting, canDuplicate, enterStageName, loaded, addingPattern;
 	PatternChanger patternChanger;
+	Prompter prompter;
+	std::string patternChanging;
 
 	void draw(std::map<std::string, sf::Texture>&,
 		sf::RenderWindow& window,
 		int& frame,
 		std::map<std::string, BulletPattern>& patterns
 	);
-	void prompt(sf::RenderWindow& window, std::string input);
 	bool selectTool(sf::RenderWindow& window,
 		int& frame,
 		std::vector<std::vector<std::vector<Bullet>>>& bullets // to move bullets

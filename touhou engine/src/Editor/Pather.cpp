@@ -16,7 +16,7 @@ Pather::Pather(sf::RenderWindow& window,
 {
     SCREENHEIGHT = screenHIn;
     SCREENWIDTH = screenWIn;
-	inputText.setFont(font);
+	prompter.setFont(font);
 
     playableArea.setOrigin(playableArea.getSize().x / 2,
         playableArea.getSize().y / 2);
@@ -31,7 +31,6 @@ Pather::Pather(sf::RenderWindow& window,
     numKeys.push_back(Keybind(sf::Keyboard::Num4));
     
     selectedEnemyIndex = -1;
-    inputStr = "";
 
     tools.push_back(Tool(textureMap["selectionIcon"], window.getSize().x / 45,
         window.getSize().y / 4, 64, 512, true)); // select enemy
@@ -43,6 +42,7 @@ Pather::Pather(sf::RenderWindow& window,
     bulletPatternMenu.setPosition(14, playableArea.getPosition().y-7);
     bulletPatternMenu.setSize(180, playableArea.getSize().y/2+7);
     bulletPatternMenu.setPatternFolder("patterns/", textureMap, font, patterns);
+    patternChanger.setFont(font);
 
     selecting = false;
     canDuplicate = false;
@@ -51,31 +51,28 @@ Pather::Pather(sf::RenderWindow& window,
 }
 
 
-void Pather::poll(sf::Event& event, int stageLength)
+void Pather::poll(sf::Event& event,
+    int stageLength,
+    std::map<std::string, BulletPattern>& patterns
+)
 {
     if (stageLength == 0 && event.type == sf::Event::TextEntered)
-    {
-        if ((char)event.text.unicode >= 48 && (char)event.text.unicode < 58)
-            inputStr += event.text.unicode;
-        else if ((char)event.text.unicode == 8 && inputStr.size() > 0)
-            inputStr.pop_back();
-    }
+        prompter.poll(event, 48, 57, inputStr1);
     else if (enterStageName && event.type == sf::Event::TextEntered)
-    {
-        if ((char)event.text.unicode == 8 && inputStr.size() > 0)
-            inputStr.pop_back();
-        else if ((char)event.text.unicode >= 32)
-            inputStr += (char)event.text.unicode;
-    }
+        prompter.poll(event, 32, 256, inputStr2, { ',', ';' });
+    else if (patternChanging != "" && event.type == sf::Event::TextEntered)
+        patternChanger.poll(event, patterns[patternChanging]);
+    else if (addingPattern && event.type == sf::Event::TextEntered)
+        prompter.poll(event, 32, 256, inputStr3, { ',', ';' });
 }
 
 
 void Pather::update(sf::RenderWindow& window,
     int& frame,
-    std::map<std::string, sf::Texture>& textureMap,
+    std::map<std::string, sf::Texture>& textures,
     std::map<std::string, BulletPattern>& patterns,
     std::vector<Enemy>& enemies,
-    int stageLength
+    int& stageLength
 )
 {
     if (!loaded)
@@ -91,15 +88,15 @@ void Pather::update(sf::RenderWindow& window,
     {
         std::string frames = "0.00";
 
-        if (inputStr != "")
-            frames = std::to_string(stoi(inputStr) / 60.).substr(0,
-                std::to_string(stoi(inputStr) / 60.).size() - 4);
+        if (inputStr1 != "")
+            frames = std::to_string(stoi(inputStr1) / 60.).substr(0,
+                std::to_string(stoi(inputStr1) / 60.).size() - 4);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
-            stageLength = stoi(inputStr) > 0 ? stoi(inputStr) + 1 : 0;
+            stageLength = stoi(inputStr1) > 0 ? stoi(inputStr1) + 1 : 0;
 
-        prompt(window, "Stage length = " + frames +
-            " seconds\nEnter frames: " + inputStr);
+        prompter.prompt(window, "Stage length = " + frames +
+            " seconds\nEnter frames: " + inputStr1, frame);
     }
     else if (enterStageName)
     {
@@ -107,7 +104,7 @@ void Pather::update(sf::RenderWindow& window,
         {
             std::fstream stageFile;
 
-            stageFile.open("stages/" + inputStr + ".stg", std::ios::out);
+            stageFile.open("stages/" + inputStr2 + ".stg", std::ios::out);
 
             stageFile << stageLength << "\n";
 
@@ -144,22 +141,63 @@ void Pather::update(sf::RenderWindow& window,
                 stageFile << ";";
             }
 
+            stageFile.close();
+
             enterStageName = false;
         }
 
-        prompt(window, "Enter stage name (no commas ',' or semicolons ';'): " + inputStr);
+        prompter.prompt(window, "Enter stage name: " + inputStr2, frame);
     }
-    else if (patternChanging)
+    else if (patternChanging != "")
     {
-        patternChanger.update(window, frame, bulletPatternMenu, patterns);
+        if (selectedEnemyIndex < 0)
+            selectedEnemyIndex = 0;
+
+        patternChanger.update(window,
+            frame,
+            bulletPatternMenu,
+            patterns,
+            textures,
+            patternChanging,
+            bulletPatternMenu
+        );
         bulletPatternMenu.update(window,
             frame,
             patherEnemies,
             selectedEnemyIndex,
-            textureMap,
+            textures,
             timeline.getCurrentFrame(),
-            patternChanging
+            patternChanging,
+            patterns,
+            addingPattern
         );
+    }
+    else if (addingPattern)
+    {
+        std::map<std::string, float> options;
+        options["originX"] = -1;
+        options["originY"] = -1;
+        options["frequency"] = 0;
+        options["burstCount"] = 0;
+        options["burstSize"] = 0;
+        options["burstSizeChange"] = 0;
+        options["direction"] = 0;
+        options["directionChange"] = 0;
+        options["spawnDirection"] = 0;
+        options["spawnDirectionChange"] = 0;
+        options["velocity"] = 0;
+        options["velocityChange"] = 0;
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+        {
+            patterns[inputStr3] = BulletPattern(options, "orb", inputStr3);
+            addingPattern = false;
+            patternChanging = inputStr3;
+            bulletPatternMenu.addButton(patterns[inputStr3]);
+            inputStr3 = "";
+        }
+
+        prompter.prompt(window, "Enter pattern name: " + inputStr3, frame);
     }
     else
     {
@@ -173,7 +211,7 @@ void Pather::update(sf::RenderWindow& window,
         if (eKey.consumeClick(frame, 20))
         {
             enterStageName = true;
-            inputStr = "";
+            inputStr2 = "";
         }
 
         if (tools[1].getStatus() && (m2.consumeClick(frame, 20) || (
@@ -184,7 +222,7 @@ void Pather::update(sf::RenderWindow& window,
             )
         )
         {
-            patherEnemies.push_back(Enemy(0, textureMap["enemy"]));
+            patherEnemies.push_back(Enemy(0, textures["enemy"]));
             selectedEnemyIndex = patherEnemies.size() - 1;
             patherEnemies[selectedEnemyIndex].setPlayableArea(playableArea);
             patherEnemies[selectedEnemyIndex].setStartFrame(timeline.getCurrentFrame());
@@ -196,7 +234,7 @@ void Pather::update(sf::RenderWindow& window,
             continuing = drawTool(window, frame);
 
         if(!continuing)
-            return draw(textureMap, window, frame, patterns);
+            return draw(textures, window, frame, patterns);
         
         Path selectedEnemyPath = patherEnemies[selectedEnemyIndex].getPath();
 
@@ -222,13 +260,15 @@ void Pather::update(sf::RenderWindow& window,
             frame,
             patherEnemies,
             selectedEnemyIndex,
-            textureMap,
+            textures,
             timeline.getCurrentFrame(),
-            patternChanging
+            patternChanging,
+            patterns,
+            addingPattern
         );
         
         // HERE enemy is unable to move when in editor
-        draw(textureMap, window, frame, patterns);
+        draw(textures, window, frame, patterns);
     }
 }
 
@@ -278,24 +318,15 @@ void Pather::draw(std::map<std::string, sf::Texture>& textureMap,
     window.draw(pathRender);
     window.draw(playableArea);
     timeline.update(window, frame);
-
+    sf::Vector2f playerPos;
+    playerPos.x = window.getSize().x / 6 * 5;
+    playerPos.y = window.getSize().y / 2;
     for (Enemy& enemy : patherEnemies)
         enemy.updateSprite(textureMap, window, frame,
-            patherBullets, timeline.getCurrentFrame(), true);
+            patherBullets, timeline.getCurrentFrame(), playerPos, true
+        );
     for (Tool& tool : tools)
         tool.update(window, frame, tools);
-}
-
-
-void Pather::prompt(sf::RenderWindow& window, std::string input)
-{
-    sf::FloatRect textRect = inputText.getLocalBounds();
-    inputText.setOrigin(textRect.left + textRect.width / 2.0f,
-        textRect.top + textRect.height / 2.0f);
-
-    inputText.setPosition(window.getSize().x / 2, window.getSize().y / 2);
-    inputText.setString(input);
-    window.draw(inputText);
 }
 
 
@@ -333,15 +364,7 @@ bool Pather::selectTool(sf::RenderWindow& window,
     if (selecting && !m1.isHeld())
         selecting = false;
 
-    sf::RectangleShape hitboxOutline;
     Enemy& selectedEnemy = patherEnemies[selectedEnemyIndex];
-    sf::FloatRect hitbox = selectedEnemy.getHitbox();
-
-    hitboxOutline.setPosition(hitbox.left, hitbox.top);
-    hitboxOutline.setSize(sf::Vector2f(hitbox.width, hitbox.height));
-    hitboxOutline.setFillColor(sf::Color::Transparent);
-    hitboxOutline.setOutlineColor(sf::Color::White);
-    hitboxOutline.setOutlineThickness(1);
 
     if (selecting)
         selectedEnemy.setPosition(mousePos, bullets);
@@ -353,7 +376,7 @@ bool Pather::selectTool(sf::RenderWindow& window,
         return false;
     }
 
-    window.draw(hitboxOutline);
+    selectedEnemy.renderHitbox(window);
     return true;
 }
 
@@ -374,4 +397,15 @@ bool Pather::drawTool(sf::RenderWindow& window, int& frame)
             sf::Vector2f(mousePos.x, mousePos.y), playableArea, window));
 
     return true;
+}
+
+
+void Pather::reload()
+{
+    loaded = false;
+    selectedEnemyIndex = -1;
+    selecting = false;
+    canDuplicate = false;
+    enterStageName = false;
+    loaded = false;
 }
